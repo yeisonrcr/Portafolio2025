@@ -1,0 +1,181 @@
+primer paso
+arquitectura del proyecto
+
+Que vamos hacer¿
+Proyecto completo de mi portafolio hecho en 
+Django Python Mysql Sqlite3 MysqlAlchemyORM Postgresql MongoDB FirebaseGoogle
+
+aplicacion 1: portafolio No contiene base de datos
+    Mi pagina principal
+    Mi pagina de proyectos
+
+apliacion 2: condominios  ORM DJANGO sql
+    Pagina INDEX:
+        En el portafolio Menu de herramientas de los condominios
+            Usuario para cada casa del condominios propietarios
+                Prodrán_: 
+                    Registrar Una visita diaria 
+                        (se elimina cada 12media noche)
+                        Actualizar la visita - Eliminar la visita -  Ver mis visitas
+                    
+                    Registrar sus automóviles y mascotas (Editarlos, eliminarlos)
+                    Registrar integrantes permanentes (Editarlos, eliminarlos)
+    
+    Base de datos: condominios
+        Tablas: UsuarioDjango, PerfilUsername, VisitaUsername, MascotasUsername, AutosUsername
+
+            PerfilUsername: ( Username - integrantesPermanentes - placasPermanentes )
+            VisitaUsername: ( Username - Personas - Placas - FechaCreada - Eliminada)
+            MascotasUsername: ( Username - Foto - Nombre - Caracteristicas )
+            AutosUsername: ( Username - Foto - Placa - Caracteristicas )
+
+    Cascada:
+
+        Servidor
+            portafolio
+                conectar paginas urls 
+            condominios
+                general el sistema de login con django por derecto
+                    pero aun asi deber crear las carpetas de los templates que django busca por defecto
+                    En la documentacion oficial estan los pasos
+                
+                crear models en la base de datos
+                crear nueva visita, editarla, eliminarla, verla, y ver todas
+
+
+#se realiza commit sistema logged realizado y pagina web personal y proyectos 21112024:8.50pm
+#se realiza version condominio terminado solo queda la esterica 22112024 10am
+
+
+
+    Aplicacion 2 Oficiales:  23112024
+        (deben estar logeados con su usuario , en el proyecto general estan
+         logeados general a todas las aplicaciones registradas en el proyecto)
+            
+        Ver todas las visitas diarias registradas
+        Ver todos los usuarios permanentes
+        Ver todos los automoviles
+        Ver todas las mascotas
+        
+        Ver los reportes
+        realizar comentario a los reportes
+
+        realizar entrada con qr del celular de la empresa, valido por 4 horas
+        realizar salida
+
+        
+            FALTA CLEAN CODE 
+            USO D BASE DE DATOS DEL Condominios
+            USO D BASE DE DATOS DE los oficiales
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    Aplicaciones control de urls
+
+                            <div >
+
+                                <a href="{% url 'login' %}"><button style="border-color: #030305;"  class="mibtn">Iniciar Sesión</button></a>
+
+                                <a href="{% url 'autoqr' %}"><button class="mibtn" >AutosQR ESPx</button></a>
+                                <a href="{% url 'condominios' %}"><button class="mibtn">Condominios App</button></a>
+                                <a href="{% url 'oficiales' %}"><button class="mibtn" >Oficiales de seguridad</button></a>
+
+
+
+                                <a href="{% url 'pokemon' %}"><button class="mibtn" >Juego Pokemon</button></a>
+                                <a href="{% url 'juegospy' %}"><button class="mibtn">Juegos Python Varios</button></a>
+                                <a href="{% url 'apps' %}"><button class="mibtn">Apps Python Varios</button></a>
+                                <a href="{% url 'autopartes' %}"><button class="mibtn">AutoPartes App</button></a>
+                                <a href="{% url 'ecommerce' %}"><button class="mibtn">Ecommerce</button></a>
+                                <a href="{% url 'simplecv' %}"><button class="mibtn">Portafolio simple</button></a>
+                                <a href="{% url 'cvcompleto' %}"><button class="mibtn">Portafolio completo</button></a>
+                                <a href="{% url 'inteligencia' %}"><button class="mibtn">Inteligencia Artificial</button></a>
+                                <a href="{% url 'detector' %}"><button class="mibtn">Detector SEF APP</button></a>
+                                <a href="{% url 'agentesia' %}"><button class="mibtn">Agentes humanos - I.A</button></a>
+                            </div>
+
+
+
+
+
+    {% extends "./uno.html" %}
+
+
+{% block title %}
+
+{% endblock title %}
+
+
+
+{% block mibloque %}
+
+
+
+{% endblock %}
+
+
+para ejecutar en produccion archivos estaticos por carpetas
+
+python manage.py collectstatic
+
+
+
+     

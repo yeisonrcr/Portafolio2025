@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta</title>
+</head>
+<body>
+
+    <div class="container">
+        <div style="text-align: center;">
+            <h1>
+                Crear Cuenta General
+            </h1>
+        </div>
+        <div>
+            <form method="post">
+                {% csrf_token %}
+
+                {{form.as_p}}
+
+                <button type="submit">Registrarse</button>
+            </form>
+            <a href="{% url "login" %}"></a>
+        </div>
+    </div>
+    
+</body>
+</html>

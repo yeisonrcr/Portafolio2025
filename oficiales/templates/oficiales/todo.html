@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+
+    <style>
+        .debes {
+            margin: 3%;
+            background-color: aquamarine;
+            border-radius: 5%;
+            text-align: center;
+            font-size: 10px;
+
+        }
+
+        .btn {
+            color: rgb(0, 0, 0);
+            border-radius: 7px;
+            padding: 5px 10px;
+            margin: 4px;
+            font-size: 18px;
+        }
+
+        .btn:hover {
+            background-color: rgb(21, 188, 188);
+        }
+
+        .tabla-container {
+            padding: 10px;
+            text-align: center;
+            margin-left: 50px;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+            text-align: left;
+        }
+
+        /*para centrar la tabla hazla 80% y al div donde la metes dale esta clase*/
+        .center {
+
+            /* utiliza flex box para centrar*/
+            justify-content: center;
+            /*Centra horizontal mente*/
+
+            text-align: center;
+            align-items: center;
+            /*centra verticalmente*/
+            min-height: 50vh;
+            /*asegura que el contenedor ocupe el 100 de la altura de la ventana*/
+
+        }
+
+        table {
+            width: 90%;
+            /*Ancho de la tabla*/
+            border-collapse: collapse;
+            /* espacio celdas eliminar */
+
+            padding: 20px 0;
+
+            margin: 20px 0;
+            /* superior e inferior */
+            font-size: 18px;
+            /*tamaño fuente */
+            text-align: center;
+            /* texto al centro */
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            /* borde de las celdas */
+            padding: 12px;
+            /* espacio interno en las celdas*/
+        }
+
+        /*estilo de la celda del encabezado */
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+
+        /* estilo para las filas pares */
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /*estilo al pasar el raton */
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        /*estilo para el titulo de la tabla */
+        caption {
+            caption-side: top;
+            /* ubicacion del titulo */
+            font-size: 20px;
+            font-weight: bold;
+            /* fuente en negrita */
+            padding: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+
+    <div class="container">
+        <div style="text-align: center;" class="container">
+
+
+            {% if user.is_authenticated %}
+
+            <h1>
+                Usuario: {{request.user.username}}
+            </h1>
+            <h3>
+                Fecha y hora: {{hora_actual}}
+            </h3>
+            <h4>
+                Usuario del proyecto general Portafolio
+            </h4>
+            <h4>
+                Todas las listas
+            </h4>
+
+            <p>
+                <strong>
+
+                    La aplicacion real Oficiales de seguridad se comunica con este servidor mediante APIREST
+                    <br>
+                    En la aplicacion los oficiales pueden <br>
+
+
+                </strong>
+
+
+                realizan las marcas de ingreso y salida <br>
+                ven todo lo del condominio
+                <br>
+                eliminan visitan diarias
+                <br>registran nuevas visitas diarias
+
+                <br><br>APLICACION HECHA CON FLUTTER (PRACTICA)
+
+                FALTANTE : CLEAN CODE ORM
+            </p>
+
+
+
+            <a href="{% url 'paginaUNO' %}">
+                <button class="btn" style="text-align: center; font-size: 2em;">
+                    home
+                </button>
+            </a>
+        </div>
+        <hr>
+        <br>
+        <br>
+        <div class="tabla-container center">
+
+            <div>
+                <h1> Permanentes </h1>
+                <table>
+                    <thead>
+
+                        <tr>
+                            <th>ID</th>
+                            <th>Casa</th>
+                            <th>Permanentes</th>
+                            <th>Placas</th>
+
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        {% for permanente in pagina_objeto_permanentes %}
+                        <tr>
+
+                            <td>{{permanente.id}}</td>
+                            <td>{{permanente.casa}}</td>
+                            <td>{{permanente.integrantes_permanente}}</td>
+                            <td>{{permanente.placas_permanentes}}</td>
+
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+
+                <!--Paginacion para manejar 10 campos por tabla-->
+                <!--Practicar mas esto para comprenderlo mejor-->
+                <div class="pagination">
+                    <span>
+
+                        <!--Si hay mas de 10 datos en la base de datos enviados permanentes-->
+                        {% if pagina_objeto_permanentes.has_previous %}
+                        <!-- Mostrar en la tabla con link manejo de lista-->
+                        <a href="?page=1">&laquo; Primera</a>
+                        <!--de los datos los siguientes 10 datos-->
+                        <a href="?page={{ pagina_objeto_permanentes.previous_page_number }}"> Siguiente </a>
+                        {% endif %}
+
+
+                        <span class="current">
+                            <!--mostramos las paginas actuales-->
+                            Página {{ pagina_objeto_permanentes.number }} de
+                            {{pagina_objeto_permanentes.paginator.num_pages}}
+                        </span>
+
+
+
+                        <!--Si tenemos paginas que regresar-->
+                        {% if pagina_objeto_permanentes.has_next %}
+                        <a href="?page={{ pagina_objeto_permanentes.next_page }}"></a>
+                        <a href="?page={{ pagina_objeto_permanentes.paginator.num_pages }}"> Atras &raquo; </a>
+                        {% endif %}
+
+
+                    </span>
+                </div>
+            </div>
+
+            <hr>
+            <br>
+            <div>
+                <h1> Visitas Autorizadas </h1>
+                <table>
+                    <thead>
+
+                        <tr>
+                            <th>Id_visita</th>
+                            <th>Casa</th>
+                            <th>Visitantes</th>
+                            <th>Placas</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+
+                        {% for visita in pagina_objeto_visitas_diarias_todas %}
+                        <tr>
+                            <!-- Recordar que este es el proyecto general con todas las app en un solo usuario por ende mostraremos el username  validar eso en el app de condominiios y oficial ya que estas aplicaciones se comunican mediante APISREST DJANGO NO POR EL ORM-->
+
+                            <td> {{visita.id}}</td>
+                            <td> {{visita.usuario.username}}</td>
+                            <td> {{visita.personas_visitantes}}</td>
+                            <td> {{visita.placas_autorizadas}}</td>
+                            <td> {{visita.eliminado|yesno:"Si,No"}}</td>
+
+                            <td> {{visita.fecha_creacion}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+
+                <!--Paginacion para manejar 10 campos por tabla-->
+                <!--Practicar mas esto para comprenderlo mejor-->
+                <div class="pagination">
+                    <span>
+
+                        <!--Si hay mas de 10 datos en la base de datos enviados permanentes-->
+                        {% if pagina_objeto_visitas_diarias_todas.has_previous %}
+                        <!-- Mostrar en la tabla con link manejo de lista-->
+                        <a href="?page=1">&laquo; Primera</a>
+                        <!--de los datos los siguientes 10 datos-->
+                        <a href="?page={{ pagina_objeto_visitas_diarias_todas.previous_page_number }}"> Siguiente </a>
+                        {% endif %}
+
+
+                        <span class="current">
+                            <!--mostramos las paginas actuales-->
+                            Página {{ pagina_objeto_visitas_diarias_todas.number }} de
+                            {{pagina_objeto_visitas_diarias_todas.paginator.num_pages}}
+                        </span>
+
+
+
+                        <!--Si tenemos paginas que regresar-->
+                        {% if pagina_objeto_visitas_diarias_todas.has_next %}
+                        <a href="?page={{ pagina_objeto_visitas_diarias_todas.next_page }}"></a>
+                        <a href="?page={{ pagina_objeto_visitas_diarias_todas.paginator.num_pages }}"> Atras &raquo;
+                        </a>
+                        {% endif %}
+
+
+                    </span>
+                </div>
+            </div>
+
+            <hr>
+            <br>
+            <br>
+            <br>
+
+            <div>
+                <h1> Automóviles Autorizados </h1>
+                <table>
+                    <thead>
+
+                        <tr>
+                            <th>ID</th>
+                            <th>Casa</th>
+                            <th>Marca</th>
+                            <th>Placa</th>
+                            <th>Características</th>
+                            <th>Imagen</th>
+
+                        </tr>
+
+                    </thead>
+                    <tbody>
+
+                        {% for auto in pagina_objeto_automoviles %}
+                        <tr>
+
+                            <td>{{auto.id}}</td>
+                            <td> {{auto.usuario.username}}</td>
+                            <td>{{auto.auto}}</td>
+                            <td>{{auto.placa}}</td>
+                            <td>{{auto.caracteristicas}}</td>
+
+                            <td>
+                                {% if auto.imagen %}
+
+                                <img src="{{ auto.imagen.url }}" alt="Foto del auto" width="40">
+
+                                {% else %}
+                                No hay imagen
+                                {% endif %}
+                            </td>
+
+
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    <span>
+
+                        <!--Si hay mas de 10 datos en la base de datos enviados permanentes-->
+                        {% if pagina_objeto_automoviles.has_previous %}
+                        <!-- Mostrar en la tabla con link manejo de lista-->
+                        <a href="?page=1">&laquo; Primera</a>
+                        <!--de los datos los siguientes 10 datos-->
+                        <a href="?page={{ pagina_objeto_automoviles.previous_page_number }}"> Siguiente </a>
+                        {% endif %}
+
+
+                        <span class="current">
+                            <!--mostramos las paginas actuales-->
+                            Página {{ pagina_objeto_automoviles.number }} de
+                            {{pagina_objeto_automoviles.paginator.num_pages}}
+                        </span>
+
+
+
+                        <!--Si tenemos paginas que regresar-->
+                        {% if pagina_objeto_automoviles.has_next %}
+                        <a href="?page={{ pagina_objeto_automoviles.next_page }}"></a>
+                        <a href="?page={{ pagina_objeto_automoviles.paginator.num_pages }}"> Atras &raquo; </a>
+                        {% endif %}
+
+
+                    </span>
+                </div>
+
+
+            </div>
+
+            <hr>
+            <br>
+            <br>
+            <br>
+            <br>
+
+            <div>
+                <h1> Mascotas </h1>
+                <table>
+                    <thead>
+
+                        <tr>
+                            <th>ID</th>
+                            <th>Casa</th>
+                            <th>Nombre</th>
+                            <th>Características</th>
+                            <th>Imagen</th>
+
+                        </tr>
+
+                    </thead>
+                    <tbody>
+
+                        {% for mascota in pagina_objeto_mascotas %}
+                        <tr>
+
+                            <td>{{mascota.id}}</td>
+
+                            <td> {{mascota.usuario.username}}</td>
+                            <td>{{mascota.nombre}}</td>
+                            <td>{{mascota.caracteristicas}}</td>
+
+                            <td>
+                                {% if mascota.foto %}
+
+                                <img src="{{ mascota.foto.url }}" alt="Foto de la mascota" width="40">
+
+                                {% else %}
+                                No hay imagen
+                                {% endif %}
+                            </td>
+
+
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    <span>
+
+                        <!--Si hay mas de 10 datos en la base de datos enviados permanentes-->
+                        {% if pagina_objeto_mascotas.has_previous %}
+                        <!-- Mostrar en la tabla con link manejo de lista-->
+                        <a href="?page=1">&laquo; Primera</a>
+                        <!--de los datos los siguientes 10 datos-->
+                        <a href="?page={{ pagina_objeto_mascotas.previous_page_number }}"> Siguiente </a>
+                        {% endif %}
+
+
+                        <span class="current">
+                            <!--mostramos las paginas actuales-->
+                            Página {{ pagina_objeto_mascotas.number }} de {{pagina_objeto_mascotas.paginator.num_pages}}
+                        </span>
+
+
+
+                        <!--Si tenemos paginas que regresar-->
+                        {% if pagina_objeto_mascotas.has_next %}
+                        <a href="?page={{ pagina_objeto_mascotas.next_page }}"></a>
+                        <a href="?page={{ pagina_objeto_mascotas.paginator.num_pages }}"> Atras &raquo; </a>
+                        {% endif %}
+
+
+                    </span>
+                </div>
+
+
+            </div>
+
+            <hr>
+            <br>
+            <br>
+            <br>
+            <div>
+                <h1> Todos los reportes de los propietarios </h1>
+                <br>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Reporte</th>
+                            <th>Fecha</th>
+
+                        </tr>
+
+                    </thead>
+                    <tbody>
+
+                        {% for reporte in pagina_objeto_reportes %}
+                        <tr>
+
+                            <td>{{reporte.id}}</td>
+
+                            <td> {{reporte.usuario.username}}</td>
+                            <td>{{reporte.reporte}}</td>
+                            <td>{{reporte.fecha_creado}}</td>
+
+
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    <span>
+
+                        <!--Si hay mas de 10 datos en la base de datos enviados permanentes-->
+                        {% if pagina_objeto_reportes.has_previous %}
+                        <!-- Mostrar en la tabla con link manejo de lista-->
+                        <a href="?page=1">&laquo; Primera</a>
+                        <!--de los datos los siguientes 10 datos-->
+                        <a href="?page={{ pagina_objeto_reportes.previous_page_number }}"> Siguiente </a>
+                        {% endif %}
+
+
+                        <span class="current">
+                            <!--mostramos datos -->
+                            Página {{ pagina_objeto_reportes.number }} de {{pagina_objeto_reportes.paginator.num_pages}}
+                        </span>
+
+                        <!--Si tenemos paginas que regresar-->
+                        {% if pagina_objeto_reportes.has_next %}
+                        <a href="?page={{ pagina_objeto_reportes.next_page }}"></a>
+                        <a href="?page={{ pagina_objeto_reportes.paginator.num_pages }}"> Atras &raquo; </a>
+                        {% endif %}
+
+
+                    </span>
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        {%else%}
+
+        <div class="debes" class="container">
+
+            <h1>
+                Debes iniciar sesión en el sistema para continuar, ve al menu de aplicaciones y create una cuenta.
+                <br>
+                <p>
+                    Ir a <a href="{% url 'proyectos' %}">Menu de aplicaciónes</a>
+                </p>
+
+        </div>
+
+
+        {% endif %}
+
+    </div>
+
+    <div class="footer">
+        <br>
+        <hr>
+        <footer>
+            <p>
+                @proyectogeneral2025
+            </p>
+        </footer>
+    </div>
+
+
+</body>
+
+</html>

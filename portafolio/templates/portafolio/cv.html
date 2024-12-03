@@ -1,0 +1,299 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Curriculum Vitae</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="site.webmanifest">
+
+    <link rel="stylesheet" type="text/css" href=" {% static 'cv/css/style.css' %} " />
+
+    <link rel="stylesheet " href=" {% static 'cv/css/bootstrap.min.css' %}">
+
+    <style>
+        .mibtn {
+            color: rgb(0, 0, 0);
+            border-radius: 7px;
+            padding: 5px 10px;
+            margin: 4px;
+        }
+
+        .mibtn:hover {
+            background-color: rgb(226, 137, 43);
+        }
+        
+    </style>
+</head>
+
+
+                                    
+<body>
+    <main>
+
+        <div class="popular-location section-padding10 ">
+            <div class="container ">
+                <div class="row ">
+                    <div class="col-lg-12 ">
+                        <div class="section-tittle text-center mb-80 ">
+                            <span style="font-size: 2.7em; margin-top: 26px;"> PROYECTOS EJECUTABLES </span>
+                            <br>
+                            <div >
+                                
+
+                                <a href="{% url 'paginaUNO' %}"><button class="mibtn">Home</button></a>
+                                <a href="{% url 'proyectos' %}"><button class="mibtn">Portafolio completo</button></a>
+
+
+
+                                <a href="{% url 'condominio_home' %}"><button class="mibtn">Condominios</button></a>
+                                <a href="{% url 'todo_oficial' %}"><button class="mibtn">Oficiales</button></a>
+
+
+                                <a href="{% url 'gyna' %}"><button class="mibtn">Control de ventas y busqueda</button></a>
+
+                                <!--
+                                
+                                <a href="#"><button class="mibtn">San Agustin Condominio</button></a>
+                                <a href="#"><button class="mibtn">Control Vehicular xQR</button></a>
+                                <a href="#"><button class="mibtn">EDUS</button></a>
+
+                                
+                                -->
+                                
+
+                                
+                                {% if user.is_authenticated %}
+                                    <form action="{% url 'logout' %}" method="post"> {% csrf_token %} <button class="mibtn" type="submit"> Cerrar Sesión </button> </form>
+                                
+                                {% else %}
+
+                                    <a href="{% url 'login' %}"><button class="mibtn">Iniciar Sesion</button></a>
+                                    <a href="{% url 'signup' %}"><button class="mibtn">Crear Cuenta</button></a>
+
+                                {% endif %}
+                                
+                            </div>
+
+                            <hr style="border: 2px solid black; ">
+                        </div>
+                    </div>
+                </div>
+
+                
+                <br>
+                <br>
+                <div class="row ">
+                    <div class="col-lg-4 col-md-6 col-sm-6 ">
+                        <div class="single-location mb-30 ">
+                            <div class="location-img ">
+                                <img src=" {% static 'cv/img/gallery/location1.png' %}" alt="">
+                            </div>
+                            <div class="location-details ">
+                                <p>GE-Condominios</p>
+                                <a href="{% url 'condominio_home' %}" class="location-btn "> Vista previa </a>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                    <br>
+
+
+                    <br>
+                    
+
+                    <div class="col-lg-4 col-md-6 col-sm-6 ">
+                        <div class="single-location mb-30 ">
+                            <div class="location-img ">
+                                <img src=" {% static  'cv/img/gallery/location3.png' %} " alt="">
+                            </div>
+
+
+                            <div class="location-details ">
+                                <p>CM-Oficiales 2021</p>
+                                <a href="{% url 'todo_oficial' %}" class="location-btn "> Vista </a>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                    
+                    <br>
+                    
+                </div>
+<br>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+        <div class="services-area pt-30 pb-30 section-bg " style="background: #030305;">
+            <div class="container" >
+                <div class="row ">
+                    <div class="col-lg-12 ">
+
+                        <div class="section-tittle section-tittle2 text-center mb-80" style="margin-top: 1cm;">
+
+                            <span style="font-size: 2.5em ">Experiencia laboral</span>
+                            <hr>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="row ">
+
+                    <div class="col-lg-12 ">
+                        <div class="single-services text-center mb-50 ">
+                            <div class="text-center services-cap ">
+
+                                <h5><a href="# ">Supervisor de seguridad GAM</a></h5>
+                                <h5><a href="# ">Respuesta armada</a></h5>
+                                <h5><a href="# ">Escolta de contenedores</a></h5>
+                                <h5><a href="# ">Desarrollador de aplicaciones administrativas</a></h5>
+                                <h5><a href="# ">Encargado Técnico T.I</a></h5>
+                                <h5><a href="# ">Departamento de becas en Academia ITN</a></h5>
+                                <h5><a href="# ">Oficial de Monitoreo y Vigilancia</a></h5>
+                                <h5><a href="# ">Seguridad Privada</a></h5>
+                                <h5><a href="# ">Python Programming Language courses</a></h5>
+                                <h5><a href="# ">Instructor computacional</a></h5>
+                                <h5><a href="# ">Seguridad Industrial</a></h5>
+                                <h5><a href="# ">Palma Aceitera & Ganadería</a></h5>
+
+                                <h5><a href="# ">Otros...</a></h5>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <div class="services-icon ">
+                                    <span class="flaticon-list "></span>
+                                </div>
+                                <div class="services-icon ">
+                                    <span class="flaticon-respect "></span>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="slider-area hero-overly ">
+            <div class="single-slider hero-overly slider-height d-flex align-items-center ">
+                <div class="container ">
+                    <div class="row justify-content-center ">
+                        <br>
+                        <div class="col-xl-8 col-lg-9 ">
+                            <div>
+                                <div class="hero__caption ">
+                                    <br>
+                                    <a href="https://wa.me/50670907086 " class="btn ">SOLICITAR INFORMACIÓN</a><br>
+                                    <br>
+                                </div>
+                                <br>
+                                <br>
+                                <br>
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    
+    <footer>
+        <div class="footer-area ">
+            <div class="container ">
+                <div class="footer-top footer-padding ">
+                    <div class="row justify-content-between ">
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6 ">
+                            <div class="single-footer-caption mb-50 ">
+                                <div class="single-footer-caption mb-30 ">
+                                    <div class="footer-logo ">
+                                        <a href="/">
+                                            <img src=" {% static 'cv/img/logo/logo2_footer.png' %} " alt="">
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 ">
+                            <div class="single-footer-caption mb-50 ">
+                                <div class="footer-tittle ">
+                                    <h4>Aplicaciones 2021</h4>
+                                    <ul>
+                                        <li><a href="{% url "todo_oficial" %}">Proyecto oficiales</a></li>
+                                        <li><a href="{% url "condominio_home" %}">Proyecto condominios</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 ">
+                            <div class="single-footer-caption mb-50 ">
+                                <div class="footer-tittle ">
+                                    <h4>Proyectos Play Store Android</h4>
+                                    <ul>
+                                        <li class="app-log ">
+                                            <a href="{% url "proyectos" %}">
+                                                
+                                            <img src=" {% static 'cv/img/gallery/app-logo.png' %} " alt="">
+
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom ">
+                    <div class="row d-flex justify-content-between align-items-center ">
+                        <div class="col-xl-9 col-lg-8 ">
+                            <div class="footer-copy-right ">
+                                <p>&copy; Yeison Araya || Todos los derechos reservados. </p>
+                                
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="back-top ">
+        <a title="Go to Top " href="/ "> <i class="fas fa-level-up-alt "></i></a>
+    </div>
+
+
+</body>
+
+</html>
