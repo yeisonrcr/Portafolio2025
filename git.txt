@@ -1,0 +1,17 @@
+control de versiones
+git 
+
+con el equipo 
+
+git clone x :clonar el git
+
+git checkout main : rama main
+
+git pull origin main : descargo ultimos cambios del repositorio remoto
+
+git merge main : fusionar cambio en el main con mi rama 
+
+git checkout -b yeison : creo una rama y automaticamente ingreso 
+
+git branch : ver que rama estoy
+
