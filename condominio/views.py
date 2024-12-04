@@ -200,13 +200,6 @@ def registro_automoviles_eliminar(request, pk):
 
 
 
-
-
-
-
-
-
-
 # Vistas para RegistroMascotas
 def registro_mascotas_lista(request):
     #cursor = RegistroMascotas.objects.all()
@@ -259,13 +252,6 @@ def registro_mascotas_eliminar(request, pk):
     return redirect('registro_mascotas_lista')
 
 
-
-
-
-
-
-
-
 #CLEAN CODE para utilizar solo una carpeta de template 
 #FALTANTE
 
@@ -302,8 +288,7 @@ def registro_reporte_editar(request, pk):
     if request.method == "POST":
         form = RegistroReportesForm(request.POST, request.FILES, instance=cursor)
         if form.is_valid():
-            
-            
+
             #nos aseguramos de incluir todos los datos necesarios para la base de datos 
             cursor = form.save(commit=False) #sin guardar en la base de datos pero guardado el formulario en una variable
             cursor.usuario = request.user #nos debemos asegurar de incluir el usuario para que se guarde la foreignKEY del usuario general

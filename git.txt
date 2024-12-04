@@ -15,3 +15,8 @@ git checkout -b yeison : creo una rama y automaticamente ingreso
 
 git branch : ver que rama estoy
 
+
+ git push -u origin yeison  : push al github , rama usada, aun no tiene el pull request del jefe pero esta subido para revision
+
+
+por ahora vamos a estar subiendo la .db y la media a git public , tener cuidado
