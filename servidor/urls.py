@@ -31,6 +31,10 @@ urlpatterns = [
     path('autopartes/', include('gyna.urls')), #agregamos urls de oficiales app
     
     
+    #urls para la app ecommerse
+    path('ecom/', include('tiendas.urls')), #agregamos urls de oficiales app
+    
+    
 ]
 
 #manejo de los archivos staticos MEDIAS IMAGENES
