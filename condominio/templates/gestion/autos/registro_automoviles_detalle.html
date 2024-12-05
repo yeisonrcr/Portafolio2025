@@ -14,9 +14,13 @@
             <p>Características: {{ automovil.caracteristicas }}</p>
             <p>Placa: {{ automovil.placa }}</p>
             <p>Fecha de Creación: {{ automovil.fecha_creada_auto }}</p>
+{% if automovil.image %}
+<img src="{{ automovil.imagen.url }}" alt="Imagen del automóvil">
+{% else %}
 
-            <img src="{{ automovil.imagen.url }}" alt="Imagen del automóvil">
-            <!--  Se llama el la imagen guardada  -->
+<p>Auto {{ automovil.placa }} no tiene foto. </p>
+{% endif %}
+           
         </div>
 
         <br><br>
