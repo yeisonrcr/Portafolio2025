@@ -1,0 +1,19 @@
+{% extends "./uno.html" %}
+
+
+{% block title %}
+
+{% endblock title %}
+
+
+
+{% block mibloque %}
+
+
+
+{% endblock %}
+
+
+para ejecutar en produccion archivos estaticos por carpetas
+
+python manage.py collectstatic
