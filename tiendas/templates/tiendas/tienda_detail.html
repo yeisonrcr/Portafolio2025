@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ tienda.nombre }}{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+        <h1 class="text-3xl font-bold mb-4">{{ tienda.nombre }}</h1>
+        <p class="text-gray-600 mb-4">
+            Ubicación: {{ tienda.provincia.nombre }}, {{ tienda.canton.nombre }}
+        </p>
+        {% if user == tienda.propietario %}
+            <a href="{% url 'crear_producto' tienda.pk %}" 
+               class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                Agregar Producto
+            </a>
+        {% endif %}
+    </div>
+
+    <form method="get" class="mb-6 flex">
+        <input type="text" name="q" placeholder="Buscar producto" 
+               value="{{ request.GET.q }}" 
+               class="flex-grow px-4 py-2 border rounded-l-md">
+        
+        <select name="categoria" class="px-4 py-2 border">
+            <option value="">Todas las Categorías</option>
+            {% for categoria in categorias %}
+                <option value="{{ categoria.slug }}" 
+                        {% if request.GET.categoria == categoria.slug %}selected{% endif %}>
+                    {{ categoria.nombre }}
+                </option>
+            {% endfor %}
+        </select>
+        
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-r-md">
+            Buscar
+        </button>
+    </form>
+
+    <div class="grid md:grid-cols-3 gap-6">
+        {% for producto in productos %}
+            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                <div class="p-6">
+                    <h2 class="text-xl font-semibold mb-2">{{ producto.nombre }}</h2>
+                    <p class="text-gray-600 mb-2">{{ producto.detalles }}</p>
+                    <p class="text-blue-600 font-bold mb-4">${{ producto.precio }}</p>
+                    <a href="{% url 'producto_detail' producto.pk %}" 
+                       class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        Ver Producto
+                    </a>
+                </div>
+            </div>
+        {% empty %}
+            <p class="col-span-3 text-center text-gray-600">No hay productos disponibles.</p>
+        {% endfor %}
+    </div>
+
+    {% include 'includes/pagination.html' %}
+</div>
+{% endblock %}
