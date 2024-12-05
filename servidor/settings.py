@@ -124,7 +124,7 @@ DJANGO_APPS=[
 ]
 
 MIS_APPS = [
-    'portafolio','accounts', 'condominio',  'oficiales', 'gyna', 
+    'portafolio','accounts', 'condominio',  'oficiales', 'gyna', 'tiendas', 
     ]
 
 INSTALLED_APPS = DJANGO_APPS + MIS_APPS 
