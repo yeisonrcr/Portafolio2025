@@ -68,3 +68,10 @@ apliacion 2: condominios  ORM DJANGO sql
             USO D BASE DE DATOS DEL Condominios
             USO D BASE DE DATOS DE los oficiales
 
+
+Actualización Diciembre 2025
+    Se configura proyecto para uso de MySQL, Gestor MySQL WorkBench o XAMMP Php
+    ![image](https://github.com/user-attachments/assets/fcae26db-97f0-4d99-a6c6-7f56e32a502e)
+
+
+
