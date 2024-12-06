@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ producto.nombre }}{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto bg-white shadow-md rounded-lg p-6">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold mb-2">{{ producto.nombre }}</h1>
+        <p class="text-gray-600 mb-4">{{ producto.detalles }}</p>
+        <p class="text-blue-600 font-bold text-2xl mb-4">${{ producto.precio }}</p>
+        <p class="text-gray-700">Tienda: <a href="{% url 'tienda_detail' slug=producto.tienda.slug %}"  class="text-blue-500">{{ producto.tienda.nombre }}</a></p>
+    </div>
+
+    {% if user.is_authenticated %}
+
+    <!-- En la vista de detalle de producto -->
+    <form method="post" action="{% url 'carrito' %}">
+        {% csrf_token %}
+        {{ form_carrito }}
+        <input type="hidden" name="producto_id" value="{{ producto.id }}">
+        <button type="submit" class="btn btn-primary">Agregar al Carrito</button>
+    </form>
+    {% else %}
+    <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative" role="alert">
+        Debes iniciar sesión para agregar productos al carrito
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
