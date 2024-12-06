@@ -26,14 +26,63 @@ class TiendaListView(ListView):
     Implementa búsqueda y filtrado
     """
     model = Tienda
-    #template_name = 'tienda_list.html'
-    context_object_name = 'tiendas' #relaciones configuradas
+    context_object_name = 'tiendas'
     paginate_by = 10  # Paginación de 10 tiendas
 
     def get_queryset(self):
         """
         Método para implementar búsqueda y filtrado de tiendas
         """
+        queryset = Tienda.objects.all()
+
+        try:
+            # Búsqueda por términos
+            query = self.request.GET.get('q')
+            if query:
+                queryset = queryset.filter(
+                    Q(nombre__icontains=query) |
+                    Q(provincia__nombre__icontains=query) |
+                    Q(canton__nombre__icontains=query)
+                )
+
+            # Filtrado por provincia
+            provincia = self.request.GET.get('provincia')
+            if provincia:
+                queryset = queryset.filter(provincia__nombre=provincia)
+
+        except Exception as e:
+            raise e
+
+        # Asegurar orden antes de retornar
+        return queryset.order_by('-fecha_creacion')  # Ordenar por fecha de creación descendente
+
+    def get_context_data(self, **kwargs):
+        """
+        Añade información adicional al contexto
+        """
+        context = super().get_context_data(**kwargs)
+        context['provincias'] = Provincia.objects.all()  # Listado de provincias para filtros
+        return context
+
+
+"""
+#clean code y solucion de errores , dejo el codigo viejo para comparacion del order_by 
+
+class TiendaListView(ListView):
+
+    "
+    Vista para listar todas las tiendas disponibles
+    Implementa búsqueda y filtrado
+    "
+    model = Tienda
+    #template_name = 'tienda_list.html'
+    context_object_name = 'tiendas' #relaciones configuradas
+    paginate_by = 10  # Paginación de 10 tiendas
+
+    def get_queryset(self):
+        "
+        Método para implementar búsqueda y filtrado de tiendas
+        "
         queryset = Tienda.objects.all()
         try:
             query = self.request.GET.get('q')
@@ -56,15 +105,14 @@ class TiendaListView(ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
-        """
+        "
         Añade información adicional al contexto
-        """
+        "
         context = super().get_context_data(**kwargs)
         context['provincias'] = Provincia.objects.all()
         return context
 
-
-
+"""
 
 
 class TiendaListView(ListView):
@@ -81,38 +129,35 @@ class TiendaListView(ListView):
         Método para implementar búsqueda y filtrado de tiendas
         """
         queryset = Tienda.objects.all()
-        query = self.request.GET.get('q')
-        if query:
-            queryset = queryset.filter(
-                Q(nombre__icontains=query) | 
-                Q(provincia__nombre__icontains=query) |
-                Q(canton__nombre__icontains=query)
-            )
-        
-        provincia = self.request.GET.get('provincia')
-        if provincia:
-            queryset = queryset.filter(provincia__nombre=provincia)
-        
-        return queryset
+
+        try:
+            # Búsqueda por términos
+            query = self.request.GET.get('q')
+            if query:
+                queryset = queryset.filter(
+                    Q(nombre__icontains=query) |
+                    Q(provincia__nombre__icontains=query) |
+                    Q(canton__nombre__icontains=query)
+                )
+
+            # Filtrado por provincia
+            provincia = self.request.GET.get('provincia')
+            if provincia:
+                queryset = queryset.filter(provincia__nombre=provincia)
+
+        except Exception as e:
+            raise e
+
+        # Asegurar orden antes de retornar
+        return queryset.order_by('-fecha_creacion')  # Ordenar por fecha de creación descendente
 
     def get_context_data(self, **kwargs):
         """
         Añade información adicional al contexto
         """
         context = super().get_context_data(**kwargs)
-        context['provincias'] = Provincia.objects.all()
+        context['provincias'] = Provincia.objects.all()  # Listado de provincias para filtros
         return context
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -124,6 +169,7 @@ class TiendaDetailView(DetailView):
     model = Tienda
     #template_name = 'ecommerce/tienda_detail.html'
     context_object_name = 'tienda'
+    
 
     def get_context_data(self, **kwargs):
         """
@@ -131,6 +177,7 @@ class TiendaDetailView(DetailView):
         """
         context = super().get_context_data(**kwargs)
         try:
+            
             # Obtener productos de la tienda
             productos = self.object.productos.all()
             
@@ -156,6 +203,8 @@ class TiendaDetailView(DetailView):
             context['categorias'] = Categoria.objects.filter(
                 producto__tienda=self.object
             ).distinct()
+            
+            
 
         except Exception as e:
             raise e
@@ -226,6 +275,29 @@ class ProductoDetailView(DetailView):
         #GET
         return self.get(request, *args, **kwargs)
 
+class CarritoView(LoginRequiredMixin, View):
+    """
+    Vista para gestionar el carrito de compras
+    Permite modificar y eliminar productos
+    """
+    template_name = 'tiendas/carrito.html'
+
+    def get(self, request):
+        """
+        Muestra los carritos del usuario
+        """
+        carritos = Carrito.objects.filter(usuario=request.user)
+        return render(request, self.template_name, {'carritos': carritos})
+
+    def post(self, request):
+        
+        """
+        Procesa modificaciones del carrito
+        """
+        # Lógica para actualizar cantidades o eliminar items
+        # Implementación detallada según requerimientos específicos
+
+
 class CrearTiendaView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     """
     Vista para crear una nueva tienda
@@ -250,51 +322,37 @@ class CrearTiendaView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return super().form_valid(form)
 
 
-class CarritoView(LoginRequiredMixin, View):
-    """
-    Vista para gestionar el carrito de compras
-    Permite modificar y eliminar productos
-    """
-    template_name = 'tiendas/carrito.html'
-
-    def get(self, request):
-        """
-        Muestra los carritos del usuario
-        """
-        carritos = Carrito.objects.filter(usuario=request.user)
-        return render(request, self.template_name, {'carritos': carritos})
-
-    def post(self, request):
-        
-        """
-        Procesa modificaciones del carrito
-        """
-        # Lógica para actualizar cantidades o eliminar items
-        # Implementación detallada según requerimientos específicos
 
 
-
+#agregar nuevo producto, y su seguridad
 class CrearProductoView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     """
     Vista para crear productos en una tienda
     Solo el propietario de la tienda puede agregar productos
     """
-    model = Producto
-    form_class = ProductoForm
-    #template_name = 'ecommerce/crear_producto.html'
+    model = Producto #llamo el modelo
+    form_class = ProductoForm #llamo el formulario para guardar datos al modelo
+    #template_name = 'ecommerce/crear_producto.html' #utilizo el templates settings de django
 
+    
+    #seguridad
     def test_func(self):
         """
         Verifica que solo el propietario de la tienda pueda agregar productos
         """
-        tienda = get_object_or_404(Tienda, pk=self.kwargs['tienda_pk'])
-        return self.request.user == tienda.propietario
+        #control de agregado de productos
+        tienda = get_object_or_404(Tienda, pk=self.kwargs['tienda_pk']) #obtengo la tienda para su relacion
+        
+        return self.request.user == tienda.propietario #retorno dueño del producto
 
+    
     def form_valid(self, form):
         """
-        Asigna la tienda al producto
+        Asigna la tienda al producto manual por seguridad objetos
         """
-        tienda = get_object_or_404(Tienda, pk=self.kwargs['tienda_pk'])
+        tienda = get_object_or_404(Tienda, pk=self.kwargs['tienda_pk']) 
+        print(str(tienda))
+        
         form.instance.tienda = tienda
         return super().form_valid(form)
 
@@ -302,4 +360,9 @@ class CrearProductoView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         """
         Redirige a la lista de productos de la tienda
         """
-        return reverse_lazy('tienda_detail', kwargs={'pk': self.kwargs['tienda_pk']})
+        return reverse_lazy('tienda_detail', kwargs={'slug': self.object.tienda.slug})
+        #return reverse_lazy('tienda_detail', kwargs={'slug': self.object.slug}) Estaba obteniendo el slug del producto y no el de la tienda
+        
+        #recordar que manejo slug para las url limpias pero puedes usar el PK de kwars para manejo como en los condominios
+        
+        #return reverse_lazy('tienda_detail', kwargs={'slug': self.kwargs['tienda_slug']})

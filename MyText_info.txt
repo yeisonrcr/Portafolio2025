@@ -40,9 +40,9 @@ git push origin usernamex
 
 
 #cada que inicio, mantengo rama actualizada
-git checkout main 
-git pull origin main 
-git checkout usernamex
+git checkout main
+git pull origin main
+git checkout ecomycr
 git merge main
 
 

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear Tienda{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Crear Tienda</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Crear</button>
+    </form>
+</div>
+{% endblock %}
