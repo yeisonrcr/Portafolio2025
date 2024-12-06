@@ -19,11 +19,25 @@ from .views import (
 urlpatterns = [
     # URLs para Tiendas
     path('', TiendaListView.as_view(), name='tienda_list'),
-    path('tienda/<slug:slug>/', TiendaDetailView.as_view(), name='tienda_detail'),
-    path('tienda/crear/', CrearTiendaView.as_view(), name='crear_tienda'),
+    
+    
+    
+    path('tienda/<slug:slug>/', TiendaDetailView.as_view(), name='tienda_detail'), 
+    
+    #path('tienda/<int:tienda_pk>/', TiendaDetailView.as_view(), name='tienda_detail'),
+    
+    
+    
+    path('user/crear_tienda/', CrearTiendaView.as_view(), name='crear_tienda'),
+    
+    
+    
     
     # URLs para Productos
-    path('producto/<slug:slug>/', ProductoDetailView.as_view(), name='producto_detail'),
+    #path('producto/<slug:slug>/', ProductoDetailView.as_view(), name='producto_detail'),
+    
+    path('producto/<int:pk>/', ProductoDetailView.as_view(), name='producto_detail'),
+    
     path('tienda/<int:tienda_pk>/producto/crear/', CrearProductoView.as_view(), name='crear_producto'),
     
     # URLs adicionales que podríamos necesitar

@@ -1,8 +1,0 @@
-{% for orden in ordenes %}
-    <div>
-        Orden #{{ orden.numero_orden }} - 
-        {{ orden.tienda.nombre }} - 
-        Total: {{ orden.monto_total }} - 
-        Estado: {{ orden.get_estado_display }}
-    </div>
-{% endfor %}

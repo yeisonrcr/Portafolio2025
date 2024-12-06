@@ -49,6 +49,7 @@ class Canton(models.Model):
     class Meta:
         verbose_name_plural = "Cantones"
         unique_together = ('nombre', 'provincia')
+        ordering = ['nombre']
 
 class Distrito(models.Model):
     """
@@ -63,6 +64,7 @@ class Distrito(models.Model):
     class Meta:
         verbose_name_plural = "Distritos"
         unique_together = ('nombre', 'canton')
+        ordering = ['nombre']
 """
 class Pueblo(models.Model):
     
@@ -99,6 +101,7 @@ class Categoria(models.Model):
 
     class Meta:
         verbose_name_plural = "Categorías"
+        ordering = ['nombre'] #ordena evitar errores UnorderedObjectListWarning 
 
 #Tiendas
 class Tienda(models.Model):
@@ -171,6 +174,7 @@ class Tienda(models.Model):
 
     class Meta:
         verbose_name_plural = "Tiendas"
+        ordering = ['nombre']
 
 
 
@@ -230,6 +234,7 @@ class Producto(models.Model):
     class Meta:
         verbose_name_plural = "Productos"
         unique_together = ('tienda', 'nombre')
+        ordering = ['nombre']
 
 class Carrito(models.Model):
     """
@@ -247,6 +252,7 @@ class Carrito(models.Model):
     class Meta:
         unique_together = ('usuario', 'tienda')
         verbose_name_plural = "Carritos"
+        ordering = ['-fecha_creacion']
 
 class ItemCarrito(models.Model):
     """
@@ -269,3 +275,4 @@ class ItemCarrito(models.Model):
     class Meta:
         unique_together = ('carrito', 'producto') #unica comunicacion
         verbose_name_plural = "Items de Carrito"
+        ordering = ['producto']
