@@ -1,0 +1,14 @@
+<h1>Detalles de Orden #{{ orden.numero_orden }}</h1>
+<p>Tienda: {{ orden.tienda.nombre }}</p>
+<p>Total: {{ orden.monto_total }}</p>
+<p>Estado: {{ orden.get_estado_display }}</p>
+
+<h2>Productos:</h2>
+{% for item in orden.items.all %}
+    <div>
+        {{ item.producto.nombre }} - 
+        Cantidad: {{ item.cantidad }} - 
+        Precio Unitario: {{ item.precio_unitario }} - 
+        Subtotal: {{ item.subtotal }}
+    </div>
+{% endfor %}
