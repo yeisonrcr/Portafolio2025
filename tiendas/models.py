@@ -15,8 +15,6 @@ Preguntas:
 """
 
 from PIL import Image #comprensión de Imagenes , 
-import os
-from django.conf import settings
 
 # Modelo de Provincias para ubicación jerárquica
 class Provincia(models.Model):

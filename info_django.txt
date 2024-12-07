@@ -17,3 +17,29 @@
 para ejecutar en produccion archivos estaticos por carpetas
 
 python manage.py collectstatic
+
+
+
+
+
+class CarritoView(LoginRequiredMixin, View):
+    """
+    Vista para gestionar el carrito de compras
+    Permite modificar y eliminar productos
+    """
+    template_name = 'tiendas/carrito.html'
+
+    def get(self, request):
+        """
+        Muestra los carritos del usuario
+        """
+        carritos = Carrito.objects.filter(usuario=request.user)
+        return render(request, self.template_name, {'carritos': carritos})
+
+    def post(self, request):
+        
+        """
+        Procesa modificaciones del carrito
+        """
+        # Lógica para actualizar cantidades o eliminar items
+        # Implementación detallada según requerimientos específicos
