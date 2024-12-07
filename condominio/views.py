@@ -2,8 +2,8 @@
 
 # Crear los view por defecto de django   / Luego cambiamos las plantillas
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
-from .models import PerfilUsuario, RegistroVisitas, RegistroAutomoviles, RegistroMascotas, RegistroReportes
-from .forms import PerfilUsuarioForm, RegistroVisitasForm, RegistroAutomovilesForm, RegistroMascotasForm , RegistroReportesForm
+from .models import PerfilUsuario, RegistroVisita, RegistroAutomovil, RegistroMascota, RegistroReporte
+from .forms import PerfilUsuarioForm, RegistroVisitaForm, RegistroAutomovilForm, RegistroMascotaForm , RegistroReporteForm
 
 #decoradores
 from django.contrib.auth.decorators import login_required #Decorador de login
@@ -11,8 +11,8 @@ from django.contrib.auth.decorators import login_required #Decorador de login
 #Se limpia el codigo en clases  y no en funciones mas atractivo y facil de mantener  (FALTANTE
 
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import RegistroVisitas, RegistroAutomoviles, RegistroMascotas
-from .forms import RegistroVisitasForm, RegistroAutomovilesForm, RegistroMascotasForm
+from .models import RegistroVisita, RegistroAutomovil, RegistroMascota
+from .forms import RegistroVisitaForm, RegistroAutomovilForm, RegistroMascotaForm
 
 #primer pagina para manejar funciones
 def home(request, *args, **kwargs):
@@ -90,22 +90,22 @@ def perfil_usuario_eliminar(request, pk):
     return redirect('perfil_usuario_lista')
 
 
-# Vistas para RegistroVisitas
+# Vistas para RegistroVisita
 def registro_visitas_lista(request):
-    #visitas = RegistroVisitas.objects.all()#mostramos todas pero solo debe ser las que el usuario creo 
+    #visitas = RegistroVisita.objects.all()#mostramos todas pero solo debe ser las que el usuario creo 
     
-    cursor = RegistroVisitas.objects.filter(usuario=request.user)
+    cursor = RegistroVisita.objects.filter(usuario=request.user)
     return render(request, 'gestion/visitas/registro_visitas_lista.html', {'visitas': cursor})
 
 def registro_visitas_detalle(request, pk):
     
-    cursor = get_object_or_404(RegistroVisitas, pk=pk)
+    cursor = get_object_or_404(RegistroVisita, pk=pk)
     
     return render(request, 'gestion/visitas/registro_visitas_detalle.html', {'visita': cursor})
 
 def registro_visitas_nuevo(request):
     if request.method == "POST":
-        form = RegistroVisitasForm(request.POST)
+        form = RegistroVisitaForm(request.POST)
         if form.is_valid():
             
             #nos aseguramos de incluir todos los datos necesarios para la base de datos 
@@ -116,13 +116,13 @@ def registro_visitas_nuevo(request):
             
             return redirect('registro_visitas_detalle', pk=cursor.pk)
     else:
-        form = RegistroVisitasForm()
+        form = RegistroVisitaForm()
     return render(request, 'gestion/visitas/registro_visitas_editar.html', {'form': form})
 
 def registro_visitas_editar(request, pk):
-    cursor = get_object_or_404(RegistroVisitas, pk=pk)
+    cursor = get_object_or_404(RegistroVisita, pk=pk)
     if request.method == "POST":
-        form = RegistroVisitasForm(request.POST, instance=cursor)
+        form = RegistroVisitaForm(request.POST, instance=cursor)
         if form.is_valid():
             
             #nos aseguramos de incluir todos los datos necesarios para la base de datos 
@@ -133,31 +133,31 @@ def registro_visitas_editar(request, pk):
             
             return redirect('registro_visitas_detalle', pk=cursor.pk)
     else:
-        form = RegistroVisitasForm(instance=cursor)
+        form = RegistroVisitaForm(instance=cursor)
     return render(request, 'gestion/visitas/registro_visitas_editar.html', {'form': form})
 
 def registro_visitas_eliminar(request, pk):
-    cursor = get_object_or_404(RegistroVisitas, pk=pk)
+    cursor = get_object_or_404(RegistroVisita, pk=pk)
     cursor.delete()
     return redirect('registro_visitas_lista')
 
 
 
 
-# Vistas para RegistroAutomoviles
+# Vistas para RegistroAutomovil
 def registro_automoviles_lista(request):
-    #automoviles = RegistroAutomoviles.objects.all()
+    #automoviles = RegistroAutomovil.objects.all()
 
-    cursor = RegistroAutomoviles.objects.filter(usuario=request.user)    
+    cursor = RegistroAutomovil.objects.filter(usuario=request.user)    
     return render(request, 'gestion/autos/registro_automoviles_lista.html', {'automoviles': cursor})
 
 def registro_automoviles_detalle(request, pk):
-    automovil = get_object_or_404(RegistroAutomoviles, pk=pk)
+    automovil = get_object_or_404(RegistroAutomovil, pk=pk)
     return render(request, 'gestion/autos/registro_automoviles_detalle.html', {'automovil': automovil})
 
 def registro_automoviles_nuevo(request):
     if request.method == "POST":
-        form = RegistroAutomovilesForm(request.POST, request.FILES)
+        form = RegistroAutomovilForm(request.POST, request.FILES)
         if form.is_valid():
             
             
@@ -170,13 +170,13 @@ def registro_automoviles_nuevo(request):
             
             return redirect('registro_automoviles_detalle', pk=cursor.pk)
     else:
-        form = RegistroAutomovilesForm()
+        form = RegistroAutomovilForm()
     return render(request, 'gestion/autos/registro_automoviles_editar.html', {'form': form})
 
 def registro_automoviles_editar(request, pk):
-    cursor = get_object_or_404(RegistroAutomoviles, pk=pk)
+    cursor = get_object_or_404(RegistroAutomovil, pk=pk)
     if request.method == "POST":
-        form = RegistroAutomovilesForm(request.POST, request.FILES, instance=cursor)
+        form = RegistroAutomovilForm(request.POST, request.FILES, instance=cursor)
         if form.is_valid():
             
             
@@ -190,29 +190,29 @@ def registro_automoviles_editar(request, pk):
             
             return redirect('registro_automoviles_detalle', pk=cursor.pk)
     else:
-        form = RegistroAutomovilesForm(instance=cursor)
+        form = RegistroAutomovilForm(instance=cursor)
     return render(request, 'gestion/autos/registro_automoviles_editar.html', {'form': form})
 
 def registro_automoviles_eliminar(request, pk):
-    cursor = get_object_or_404(RegistroAutomoviles, pk=pk)
+    cursor = get_object_or_404(RegistroAutomovil, pk=pk)
     cursor.delete()
     return redirect('registro_automoviles_lista')
 
 
 
-# Vistas para RegistroMascotas
+# Vistas para RegistroMascota
 def registro_mascotas_lista(request):
-    #cursor = RegistroMascotas.objects.all()
-    cursor = RegistroMascotas.objects.filter(usuario=request.user)
+    #cursor = RegistroMascota.objects.all()
+    cursor = RegistroMascota.objects.filter(usuario=request.user)
     return render(request, 'gestion/mascotas/registro_mascotas_lista.html', {'mascotas': cursor})
 
 def registro_mascotas_detalle(request, pk):
-    cursor = get_object_or_404(RegistroMascotas, pk=pk)
+    cursor = get_object_or_404(RegistroMascota, pk=pk)
     return render(request, 'gestion/mascotas/registro_mascotas_detalle.html', {'mascota': cursor})
 
 def registro_mascotas_nuevo(request):
     if request.method == "POST":
-        form = RegistroMascotasForm(request.POST, request.FILES)
+        form = RegistroMascotaForm(request.POST, request.FILES)
         if form.is_valid():
             
             #nos aseguramos de incluir todos los datos necesarios para la base de datos 
@@ -224,13 +224,13 @@ def registro_mascotas_nuevo(request):
 
             return redirect('registro_mascotas_detalle', pk=cursor.pk)
     else:
-        form = RegistroMascotasForm()
+        form = RegistroMascotaForm()
     return render(request, 'gestion/mascotas/registro_mascotas_editar.html', {'form': form})
 
 def registro_mascotas_editar(request, pk):
-    cursor = get_object_or_404(RegistroMascotas, pk=pk)
+    cursor = get_object_or_404(RegistroMascota, pk=pk)
     if request.method == "POST":
-        form = RegistroMascotasForm(request.POST, request.FILES, instance=cursor)
+        form = RegistroMascotaForm(request.POST, request.FILES, instance=cursor)
         if form.is_valid():
             
             
@@ -243,11 +243,11 @@ def registro_mascotas_editar(request, pk):
             
             return redirect('registro_mascotas_detalle', pk=cursor.pk)
     else:
-        form = RegistroMascotasForm(instance=cursor)
+        form = RegistroMascotaForm(instance=cursor)
     return render(request, 'gestion/mascotas/registro_mascotas_editar.html', {'form': form})
 
 def registro_mascotas_eliminar(request, pk):
-    cursor = get_object_or_404(RegistroMascotas, pk=pk)
+    cursor = get_object_or_404(RegistroMascota, pk=pk)
     cursor.delete()
     return redirect('registro_mascotas_lista')
 
@@ -259,16 +259,16 @@ def registro_mascotas_eliminar(request, pk):
 def registro_reporte_lista(request):
     
     #solo los reportes hechos por  mi/usuario logeado
-    cursor = RegistroReportes.objects.filter(usuario=request.user)
+    cursor = RegistroReporte.objects.filter(usuario=request.user)
     return render(request, 'gestion/reportes/registro_reportes_lista.html', {'reportes': cursor})
 
 def registro_reporte_detalle(request, pk):
-    cursor = get_object_or_404(RegistroReportes, pk=pk)
+    cursor = get_object_or_404(RegistroReporte, pk=pk)
     return render(request, 'gestion/reportes/registro_reportes_detalle.html', {'reporte': cursor})
 
 def registro_reporte_nuevo(request):
     if request.method == "POST":
-        form = RegistroReportesForm(request.POST, request.FILES)
+        form = RegistroReporteForm(request.POST, request.FILES)
         if form.is_valid():
             
             #nos aseguramos de incluir todos los datos necesarios para la base de datos 
@@ -280,13 +280,13 @@ def registro_reporte_nuevo(request):
 
             return redirect('reporte_detalle', pk=cursor.pk)
     else:
-        form = RegistroReportesForm()
+        form = RegistroReporteForm()
     return render(request, 'gestion/reportes/registro_reportes_editar.html', {'form': form})
 
 def registro_reporte_editar(request, pk):
-    cursor = get_object_or_404(RegistroReportes, pk=pk)
+    cursor = get_object_or_404(RegistroReporte, pk=pk)
     if request.method == "POST":
-        form = RegistroReportesForm(request.POST, request.FILES, instance=cursor)
+        form = RegistroReporteForm(request.POST, request.FILES, instance=cursor)
         if form.is_valid():
 
             #nos aseguramos de incluir todos los datos necesarios para la base de datos 
@@ -298,11 +298,11 @@ def registro_reporte_editar(request, pk):
             
             return redirect('reporte_detalle', pk=cursor.pk)
     else:
-        form = RegistroReportesForm(instance=cursor)
+        form = RegistroReporteForm(instance=cursor)
     return render(request, 'gestion/reportes/registro_reportes_editar.html', {'form': form})
 
 def registro_reporte_eliminar(request, pk):
-    cursor = get_object_or_404(RegistroReportes, pk=pk)
+    cursor = get_object_or_404(RegistroReporte, pk=pk)
     cursor.delete()
     return redirect('reportes_lista')
 

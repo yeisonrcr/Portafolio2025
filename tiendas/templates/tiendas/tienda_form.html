@@ -3,12 +3,80 @@
 {% block title %}Crear Tienda{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto">
-    <h1 class="text-3xl font-bold mb-6">Crear Tienda</h1>
+<div>
+    <h1>Crear Tienda</h1>
+    
+
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Crear</button>
+        <button type="submit">
+            Crear
+        </button>
     </form>
+    <style>
+
+        form p {
+            margin-bottom: 15px;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f8ec; /* Color de fondo natural */
+            color: #4a4a4a; /* Color de texto principal */
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #3b7a57; /* Color verde que evoca la naturaleza */
+            text-align: center;
+            font-size: 2.5em;
+        }
+        
+        form {
+            background-color: #ffffff; /* Fondo blanco para el formulario */
+            border: 2px solid #3b7a57; /* Borde verde */
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para el formulario */
+            max-width: 600px;
+            margin: 0 auto; /* Centrar el formulario */
+        }
+        
+        form button {
+            background-color: #3b7a57; /* Botón verde */
+            color: #ffffff; /* Texto blanco */
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        
+        form button:hover {
+            background-color: #00ff59; /* Color más oscuro al pasar el cursor */
+        }
+        
+        input[type="text"], input[type="file"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+        }
+        
+        input[type="text"]:focus, input[type="file"]:focus, select:focus {
+            border-color: #3b7a57; /* Borde verde al enfocar */
+            outline: none;
+        }
+        
+        label {
+            font-weight: bold;
+            color: #3b7a57;
+        }
+        
+    </style>
+    
+
+    
 </div>
 {% endblock %}

@@ -1,5 +1,5 @@
 from django import forms
-from .models import PerfilUsuario, RegistroVisitas, RegistroAutomoviles, RegistroMascotas, RegistroReportes
+from .models import PerfilUsuario, RegistroVisita, RegistroAutomovil, RegistroMascota, RegistroReporte
 
 
 class PerfilUsuarioForm(forms.ModelForm):
@@ -7,22 +7,22 @@ class PerfilUsuarioForm(forms.ModelForm):
         model = PerfilUsuario
         fields = ['integrantes_permanente', 'placas_permanentes']
 
-class RegistroVisitasForm(forms.ModelForm):
+class RegistroVisitaForm(forms.ModelForm):
     class Meta:
-        model = RegistroVisitas
+        model = RegistroVisita
         fields = ['personas_visitantes', 'placas_autorizadas']
 
-class RegistroAutomovilesForm(forms.ModelForm):
+class RegistroAutomovilForm(forms.ModelForm):
     class Meta:
-        model = RegistroAutomoviles
+        model = RegistroAutomovil
         fields = ['auto', 'imagen', 'caracteristicas', 'placa']
 
-class RegistroMascotasForm(forms.ModelForm):
+class RegistroMascotaForm(forms.ModelForm):
     class Meta:
-        model = RegistroMascotas
+        model = RegistroMascota
         fields = ['nombre', 'foto', 'caracteristicas']
 
-class RegistroReportesForm(forms.ModelForm):
+class RegistroReporteForm(forms.ModelForm):
     class Meta:
-        model = RegistroReportes
+        model = RegistroReporte
         fields = ['reporte']

@@ -2,90 +2,128 @@
 {% block title %}Mi Carrito{% endblock %}
 {% block content %}
 
+<!--La función principal de with  es:Crear variables temporales de contexto Simplificar el acceso a datos en el templatePotencialmente mejorar el rendimiento al evitar llamadas repetidas a atributos complejos-->
 <div class="max-w-4xl mx-auto">
     <h1 class="text-3xl font-bold mb-6">Mi Carrito</h1>
 
-    {% for carrito in carritos %}
-        <div class="bg-white shadow-md rounded-lg mb-6">
-            <div class="p-6">
-                <h2 class="text-2xl font-semibold mb-4">Carrito de {{ carrito.tienda.nombre }}</h2>
+    {% if not carritos_paginados %}
+    <div class="text-center text-gray-500">
+        Tu carrito está vacío por paginados
+    </div>
 
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>Precio</th>
-                            <th>Subtotal</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in carrito.items.all %}
-                            <tr>
-                                <td>{{ item.producto.nombre }}</td>
-                                <td>
-                                    <form method="post">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="item_id" value="{{ item.id }}">
-                                        <input type="hidden" name="actualizar_cantidad" value="1">
-                                        <input 
-                                            type="number" 
-                                            name="cantidad" 
-                                            value="{{ item.cantidad }}" 
-                                            min="1" 
-                                            max="{{ item.producto.stock }}"
-                                            class="w-20"
-                                        >
-                                        <button type="submit" class="bg-blue-500 text-white px-2 py-1 rounded">
-                                            Actualizar
-                                        </button>
-                                    </form>
-                                </td>
-                                <td>${{ item.precio_unitario }}</td>
-                                <td>${{ item.subtotal }}</td>
-                                <td>
-                                    <form method="post">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="item_id" value="{{ item.id }}">
-                                        <input type="hidden" name="eliminar_item" value="1">
-                                        <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded">
-                                            Eliminar
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="5">No hay productos en este carrito</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
 
-                <div class="mt-4 flex justify-between">
-                    <div class="font-bold text-xl">
-                        Total: ${{ carrito.total }}
-                    </div>
-                    <div class="space-x-4">
-                        <form method="post" class="inline">
-                            {% csrf_token %}
-                            <input type="hidden" name="carrito_id" value="{{ carrito.id }}">
-                            <input type="hidden" name="vaciar_carrito" value="1">
-                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-                                Vaciar Carrito
-                            </button>
-                        </form>
-                        <a href="#" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-                            Procesar Compra
-                        </a>
+    {% endif %}
+
+    {% for carrito in carritos_paginados %}
+
+        {% with carrito=carrito.carrito items=carrito.items %}
+            <div>
+                <div class="bg-white shadow-md rounded-lg mb-6">
+                    <div class="p-6">
+                        <h2 class="text-2xl font-semibold mb-4">Tienda <a href="{% url 'tienda_detail' slug=carrito.tienda.slug %}"
+                                class="text-blue-500">{{ carrito.tienda.nombre }}</a></h2>
+
+
+                        <table class="w-full">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio</th>
+                                    <th>Subtotal</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in carrito.items.all %}
+                                <tr>
+                                    <td>{{ item.producto.nombre }}</td>
+                                    <td>
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="item_id" value="{{ item.id }}">
+                                            <input type="hidden" name="actualizar_cantidad" value="1">
+                                            <input type="number" name="cantidad" value="{{ item.cantidad }}" min="1"
+                                                max="{{ item.producto.stock }}" class="w-20">
+                                            <button type="submit" class="bg-blue-500 text-white px-2 py-1 rounded">
+                                                Actualizar
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td>${{ item.precio_unitario }}</td>
+                                    <td>${{ item.subtotal }}</td>
+                                    <td>
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="item_id" value="{{ item.id }}">
+                                            <input type="hidden" name="eliminar_item" value="1">
+                                            <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded">
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5">No hay productos en este carrito</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+
+
+
+                        {# Paginación para cada carrito #}
+                        {% if carrito.total_paginas > 1 %}
+                        <div class="flex justify-center mt-4">
+                            <nav>
+                                {% if items.has_previous %}
+                                <a href="?page_carrito_{{ carrito.id }}={{ items.previous_page_number }}"
+                                    class="px-3 py-1 bg-gray-200 rounded mr-2">
+                                    Anterior
+                                </a>
+                                {% endif %}
+
+                                <span class="px-3 py-1">
+                                    Página {{ items.number }} de {{ carrito.total_paginas }}
+                                </span>
+
+                                {% if items.has_next %}
+                                <a href="?page_carrito_{{ carrito.id }}={{ items.next_page_number }}"
+                                    class="px-3 py-1 bg-gray-200 rounded ml-2">
+                                    Siguiente
+                                </a>
+                                {% endif %}
+                            </nav>
+                        </div>
+                        {% endif %}
+                        <div class="mt-4 flex justify-between">
+                            <div class="font-bold text-xl">
+                                Total: ${{ carrito.total }}
+                            </div>
+                            <div class="space-x-4">
+                                <form method="post" class="inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="carrito_id" value="{{ carrito.id }}">
+                                    <input type="hidden" name="vaciar_carrito" value="1">
+                                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                                        Vaciar Carrito
+                                    </button>
+                                </form>
+                                <a href="#" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                    Procesar Compra
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                
             </div>
-        </div>
+        {% endwith %}
     {% empty %}
         <div class="text-center text-gray-500">
-            Tu carrito está vacío
+            Tu carrito está vacío por empty Django
         </div>
     {% endfor %}
 </div>

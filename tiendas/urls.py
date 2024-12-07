@@ -10,7 +10,9 @@ from .views import (
     
     # Vistas de Productos
     ProductoDetailView,
-    CrearProductoView,CarritoView
+    CrearProductoView,CarritoView,
+    get_cantones,
+    get_distritos
     
     # Otras vistas que puedan ser necesarias
 )
@@ -30,6 +32,8 @@ urlpatterns = [
     
     path('user/crear_tienda/', CrearTiendaView.as_view(), name='crear_tienda'),
     
+    path('get_cantones/', get_cantones, name='get_cantones'), 
+    path('get_distritos/', get_distritos, name='get_distritos'),
     
     
     
@@ -42,6 +46,11 @@ urlpatterns = [
     
     # URLs adicionales que podríamos necesitar
     path('carrito/', CarritoView.as_view(), name='carrito'),
+    
+    
+    
+    
+    
 ]
 
 # Configuración para servir archivos multimedia durante el desarrollo
