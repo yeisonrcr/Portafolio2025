@@ -64,103 +64,6 @@ class TiendaListView(ListView):
         context['provincias'] = Provincia.objects.all()  # Listado de provincias para filtros
         return context
 
-
-"""
-#clean code y solucion de errores , dejo el codigo viejo para comparacion del order_by 
-
-class TiendaListView(ListView):
-
-    "
-    Vista para listar todas las tiendas disponibles
-    Implementa búsqueda y filtrado
-    "
-    model = Tienda
-    #template_name = 'tienda_list.html'
-    context_object_name = 'tiendas' #relaciones configuradas
-    paginate_by = 10  # Paginación de 10 tiendas
-
-    def get_queryset(self):
-        "
-        Método para implementar búsqueda y filtrado de tiendas
-        "
-        queryset = Tienda.objects.all()
-        try:
-            query = self.request.GET.get('q')
-            if query: #si hay un dato de x en y 
-                queryset = queryset.filter(
-                    Q(nombre__icontains=query) | 
-                    Q(provincia__nombre__icontains=query) |
-                    Q(canton__nombre__icontains=query)
-                )
-            
-            # Filtrado por provincia
-            provincia = self.request.GET.get('provincia')
-            if provincia:
-                queryset = queryset.filter(provincia__nombre=provincia)
-        
-        except Exception as e:
-            raise e
-        
-        # Búsqueda por nombre o ubicación
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        "
-        Añade información adicional al contexto
-        "
-        context = super().get_context_data(**kwargs)
-        context['provincias'] = Provincia.objects.all()
-        return context
-
-"""
-
-
-class TiendaListView(ListView):
-    """
-    Vista para listar todas las tiendas disponibles
-    Implementa búsqueda y filtrado
-    """
-    model = Tienda
-    context_object_name = 'tiendas'
-    paginate_by = 10  # Paginación de 10 tiendas
-
-    def get_queryset(self):
-        """
-        Método para implementar búsqueda y filtrado de tiendas
-        """
-        queryset = Tienda.objects.all()
-
-        try:
-            # Búsqueda por términos
-            query = self.request.GET.get('q')
-            if query:
-                queryset = queryset.filter(
-                    Q(nombre__icontains=query) |
-                    Q(provincia__nombre__icontains=query) |
-                    Q(canton__nombre__icontains=query)
-                )
-
-            # Filtrado por provincia
-            provincia = self.request.GET.get('provincia')
-            if provincia:
-                queryset = queryset.filter(provincia__nombre=provincia)
-
-        except Exception as e:
-            raise e
-
-        # Asegurar orden antes de retornar
-        return queryset.order_by('-fecha_creacion')  # Ordenar por fecha de creación descendente
-
-    def get_context_data(self, **kwargs):
-        """
-        Añade información adicional al contexto
-        """
-        context = super().get_context_data(**kwargs)
-        context['provincias'] = Provincia.objects.all()  # Listado de provincias para filtros
-        return context
-
-
-
 class TiendaDetailView(DetailView):
     """
     Vista de detalle para una tienda específica
@@ -275,29 +178,7 @@ class ProductoDetailView(DetailView):
         #GET
         return self.get(request, *args, **kwargs)
 
-class CarritoView(LoginRequiredMixin, View):
-    """
-    Vista para gestionar el carrito de compras
-    Permite modificar y eliminar productos
-    """
-    template_name = 'tiendas/carrito.html'
-
-    def get(self, request):
-        """
-        Muestra los carritos del usuario
-        """
-        carritos = Carrito.objects.filter(usuario=request.user)
-        return render(request, self.template_name, {'carritos': carritos})
-
-    def post(self, request):
-        
-        """
-        Procesa modificaciones del carrito
-        """
-        # Lógica para actualizar cantidades o eliminar items
-        # Implementación detallada según requerimientos específicos
-
-
+#Crear tienda, con el superuser logeado VERIFICAR LA SEGURIDAD QUE SOLO UN SUPERUSER PUEDE CREAR TIENDAS 
 class CrearTiendaView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     """
     Vista para crear una nueva tienda
@@ -320,9 +201,6 @@ class CrearTiendaView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         """
         form.instance.propietario = self.request.user
         return super().form_valid(form)
-
-
-
 
 #agregar nuevo producto, y su seguridad
 class CrearProductoView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
@@ -366,3 +244,93 @@ class CrearProductoView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         #recordar que manejo slug para las url limpias pero puedes usar el PK de kwars para manejo como en los condominios
         
         #return reverse_lazy('tienda_detail', kwargs={'slug': self.kwargs['tienda_slug']})
+        
+        
+
+
+"""
+    Consideraciones Importantes
+
+        Validación de Stock: En la vista, se valida que la cantidad no supere el stock disponible.
+        Mensajes de Usuario: Se usan mensajes de Django para notificar acciones exitosas o errores.
+        Seguridad: Solo el usuario propietario puede modificar su propio carrito.
+
+"""
+
+class CarritoView(LoginRequiredMixin, View):
+    """
+    Vista para gestionar el carrito de compras
+    Permite varias funciones
+    """
+    template_name = 'tiendas/carrito.html' #declaro la template que voy a usar
+
+    def get(self, request): # al hacer una consulta
+        """
+        Muestra el carrito del usuario, con varios carritos, y cada carrito con varios items se maneja orientado a objetos en los models 
+            Se utiliza funciones por defecto Django
+                Carrito
+                    ItemCarrito
+        """
+        carritos = Carrito.objects.filter(usuario=request.user)
+        
+        #envio con normalidad para mas ordenado
+        return render(request, self.template_name, {'carritos': carritos})
+
+    #funciones post request http
+    def post(self, request):
+        """
+        Procesa modificaciones del carrito
+        """
+        try:
+            # Actualizar cantidad de un ítemCarrito del carrito
+            if 'actualizar_cantidad' in request.POST:
+                item_id = request.POST.get('item_id')#obtengo el item 
+                nueva_cantidad = request.POST.get('cantidad') #obtengo la nueva cantidad por el usuario en el formulario
+                
+                try:
+                    item = ItemCarrito.objects.get(id=item_id, carrito__usuario=request.user) # manejo de errores, tato de 
+                    #Obtengo el item con el acceso debido
+                    #seguridad para produccion escalable
+                    
+                    # Validar que la cantidad no exceda el stock
+                    producto = item.producto
+                    if int(nueva_cantidad) <= producto.stock:#validamos la cantidad de los productos 
+                        item.cantidad = nueva_cantidad # si cambiamos la cantidad del item
+                        item.save() #guardo lo nuevo al item
+                        messages.success(request, 'Cantidad actualizada correctamente') #manejamos msj por ahora
+                    else:
+                        messages.error(request, f'Solo hay {producto.stock} unidades disponibles')
+                
+                except ItemCarrito.DoesNotExist:
+                    messages.error(request, 'El ítem no existe')
+            
+            # Vaciar carrito completo
+            elif 'vaciar_carrito' in request.POST:
+                carrito_id = request.POST.get('carrito_id')
+                try:
+                    #manejo carritos y items en cada carrito por usuarios logeados
+                    carrito = Carrito.objects.get(id=carrito_id, usuario=request.user) #envio id y usuario (con los mixins)
+                    carrito.items.all().delete() #elimino los items en este carrito
+                    messages.success(request, 'Carrito vaciado correctamente')
+                except Carrito.DoesNotExist:
+                    messages.error(request, 'El carrito no existe')
+            
+            # Eliminar ítem específico
+            elif 'eliminar_item' in request.POST:
+                #obtengo el item e intento eliminarlo
+                item_id = request.POST.get('item_id')
+                try:
+                    item = ItemCarrito.objects.get(id=item_id, carrito__usuario=request.user) #envio peticion a la base de datos de los items agregados al carrito ID, (envio mixins id, y user)
+                    item.delete() #elimino el item 
+                    messages.success(request, 'Producto eliminado del carrito')
+                except ItemCarrito.DoesNotExist:
+                    messages.error(request, 'El ítem no existe') #si no es portque no hay nada aca
+        
+        except Exception as e:
+            messages.error(request, f'Error al procesar el carrito: {str(e)}')
+        return redirect('carrito') #retorno carrito
+
+
+
+
+
