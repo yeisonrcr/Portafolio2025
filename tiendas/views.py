@@ -187,6 +187,8 @@ class ProductoDetailView(DetailView):
                     item_carrito.save()
                 
                 messages.success(request, f'Producto {self.object.nombre} agregado al carrito')
+
+                
                 return redirect('producto_detail', pk=self.object.pk)
             
         except Exception as e:
@@ -369,21 +371,49 @@ class CarritoView(LoginRequiredMixin, View):
                     #manejo carritos y items en cada carrito por usuarios logeados
                     carrito = Carrito.objects.get(id=carrito_id, usuario=request.user) #envio id y usuario (con los mixins)
                     carrito.items.all().delete() #elimino los items en este carrito
+                    carrito.delete()
+                    
                     messages.success(request, 'Carrito vaciado correctamente')
                 except Carrito.DoesNotExist:
                     messages.error(request, 'El carrito no existe')
-            
-            # Eliminar ítem específico
+                        # Eliminar ítem específico
+                        
+                        
+                        
             elif 'eliminar_item' in request.POST:
-                #obtengo el item e intento eliminarlo
-                item_id = request.POST.get('item_id')
+                carrito_id = request.POST.get('carrito_id')  # ID del carrito enviado desde el formulario
+                item_id = request.POST.get('item_id')  # ID del ítem a eliminar
+
                 try:
-                    item = ItemCarrito.objects.get(id=item_id, carrito__usuario=request.user) #envio peticion a la base de datos de los items agregados al carrito ID, (envio mixins id, y user)
-                    item.delete() #elimino el item 
-                    messages.success(request, 'Producto eliminado del carrito')
+                    # Verificar que ambos IDs estén presentes
+                    if not carrito_id or not item_id:
+                        messages.error(request, "Faltan datos: carrito_id o item_id.")
+                        return redirect('carrito')  # Reemplaza 'tu_vista' con la vista correspondiente
+
+                    # Obtener el ítem específico relacionado con el carrito y el usuario
+                    item = ItemCarrito.objects.get(id=item_id, carrito__id=carrito_id, carrito__usuario=request.user)
+                    
+                    # Eliminar el ítem seleccionado
+                    item.delete()
+
+                    # Verificar si el carrito queda sin ítems
+                    carrito = Carrito.objects.get(id=carrito_id, usuario=request.user)  # Obtener el carrito
+                    if not carrito.items.exists():  # Si el carrito no tiene más ítems
+                        carrito.delete()  # Eliminar el carrito
+                        print("El carrito ha sido eliminado porque ya no tiene ítems.")
+                        messages.success(request, 'El producto fue eliminado y el carrito estaba vacío, así que fue eliminado.')
+                    else:
+                        print("El carrito aún tiene ítems.")
+                        messages.success(request, 'Producto eliminado del carrito.')
+
                 except ItemCarrito.DoesNotExist:
-                    messages.error(request, 'El ítem no existe') #si no es portque no hay nada aca
-        
+                    messages.error(request, 'El ítem que intentas eliminar no existe.')
+                except Carrito.DoesNotExist:
+                    messages.error(request, 'El carrito no existe.')
+                except Exception as e:
+                    messages.error(request, f'Ocurrió un error: {str(e)}')
+
+ 
         except Exception as e:
             messages.error(request, f'Error al procesar el carrito: {str(e)}')
         return redirect('carrito') #retorno carrito

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_animales.html' %}
 
 {% block title %}Crear Tienda{% endblock %}
 
@@ -7,7 +7,7 @@
     <h1>Crear Tienda</h1>
     
 
-    <form method="post" enctype="multipart/form-data">
+    <form  method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">
@@ -39,21 +39,15 @@
             padding: 20px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para el formulario */
             max-width: 600px;
+            justify-content: center;
             margin: 0 auto; /* Centrar el formulario */
         }
         
-        form button {
-            background-color: #3b7a57; /* Botón verde */
-            color: #ffffff; /* Texto blanco */
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
+        form button {background-color: #2b6b48; /* Botón verde */ color: #ffffff; /* Texto blanco */ border: none; border-radius: 5px; padding: 10px 20px; font-size: 1em; cursor: pointer; margin-left: 20px; width: 100%; /* Hace el botón largo */ max-width: 300px;
         }
         
         form button:hover {
-            background-color: #00ff59; /* Color más oscuro al pasar el cursor */
+            background-color: #238246; /* Color más oscuro al pasar el cursor */
         }
         
         input[type="text"], input[type="file"], select {

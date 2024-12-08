@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_ecommerce.html' %}
 
 {% block title %}Tiendas Disponibles{% endblock %}
 
@@ -29,10 +29,17 @@
     <!--Ejemplo de uso directo, pero para escalabilidad utilizamos include/pagination.html e include -->
     <div class="grid md:grid-cols-3 gap-6">
         {% for tienda in tiendas %}
+        
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
                 <div class="p-6">
                     <h2 class="text-xl font-semibold mb-2">{{ tienda.nombre }}</h2>
-                    <p class="text-gray-600 mb-4">{{ tienda.provincia.nombre }}, {{ tienda.canton.nombre }}</p>
+                    <p class="text-gray-600 mb-4">{{ tienda.canton.nombre }}, {{ tienda.distrito.nombre }}</p>
+                    
+                    {% if tienda.logo %} 
+                    <div class="flex mb-4"> 
+                        <img src="{{ tienda.logo.url }}" alt="Imagen de la tienda" class="max-w-xs h-32 w-32 rounded-lg shadow-md object-contain"> 
+                    </div> 
+                    {% else %} <p>No hay logo</p> {% endif %}
                     
                     <a href="{% url 'tienda_detail' slug=tienda.slug %}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                         Ver Tienda

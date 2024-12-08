@@ -192,7 +192,7 @@ class Producto(models.Model):
     foto3 = models.ImageField(upload_to='productos/', blank=True, null=True)
     
     detalles = models.TextField()
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    precio = models.DecimalField(default=0,max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
     
     estrellas = models.FloatField(default=0, validators=[MinValueValidator(0), MaxValueValidator(5)])

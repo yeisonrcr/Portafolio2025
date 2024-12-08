@@ -20,7 +20,7 @@
             <div>
                 <div class="bg-white shadow-md rounded-lg mb-6">
                     <div class="p-6">
-                        <h2 class="text-2xl font-semibold mb-4">Tienda <a href="{% url 'tienda_detail' slug=carrito.tienda.slug %}"
+                        <h2 class="text-2xl font-semibold mb-4"><a href="{% url 'tienda_detail' slug=carrito.tienda.slug %}"
                                 class="text-blue-500">{{ carrito.tienda.nombre }}</a></h2>
 
 
@@ -50,12 +50,14 @@
                                             </button>
                                         </form>
                                     </td>
-                                    <td>${{ item.precio_unitario }}</td>
-                                    <td>${{ item.subtotal }}</td>
+                                    <td>₡{{ item.precio_unitario }}</td>
+                                    <td>₡{{ item.subtotal }}</td>
                                     <td>
                                         <form method="post">
                                             {% csrf_token %}
+                                            <!--Recordar enviar en hidden los id que necesitamos-->
                                             <input type="hidden" name="item_id" value="{{ item.id }}">
+                                            <input type="hidden" name="carrito_id" value="{{ carrito.id }}">
                                             <input type="hidden" name="eliminar_item" value="1">
                                             <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded">
                                                 Eliminar
@@ -100,7 +102,7 @@
                         {% endif %}
                         <div class="mt-4 flex justify-between">
                             <div class="font-bold text-xl">
-                                Total: ${{ carrito.total }}
+                                Total: ₡{{ carrito.total }}
                             </div>
                             <div class="space-x-4">
                                 <form method="post" class="inline">
