@@ -41,7 +41,7 @@ class PerfilUsuario(models.Model):
         verbose_name_plural="Visitas"
 
 # Tabla RegistroVisitas
-class RegistroVisitas(models.Model):
+class RegistroVisita(models.Model):
     
     usuario = models.ForeignKey(User, on_delete=models.CASCADE) #relacion
     personas_visitantes = models.CharField(max_length=1000, null=False)
@@ -66,11 +66,12 @@ class RegistroVisitas(models.Model):
             "personas_autorizadas", "placas_autorizadas"
         ]
         
-        verbose_name="Visita"
-        verbose_name_plural="Visitas"
+        # Esto cambiará cómo se muestra en el admin
+        verbose_name = "Registro de Visita"
+        verbose_name_plural = "Registros de Visitas"
         
 # Tabla RegistroAutomoviles
-class RegistroAutomoviles(models.Model):
+class RegistroAutomovil(models.Model):
     
     #Recordar la logica del proyecto general y no es la de la aplicacion de los condominos
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -102,7 +103,7 @@ class RegistroAutomoviles(models.Model):
         
     
 # Tabla RegistroMascotas
-class RegistroMascotas(models.Model):
+class RegistroMascota(models.Model):
     
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100,null=False )
@@ -130,7 +131,7 @@ class RegistroMascotas(models.Model):
         verbose_name="Mascota"
         verbose_name_plural="Mascotas"
         
-class RegistroReportes(models.Model):
+class RegistroReporte(models.Model):
     
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     reporte = models.TextField(blank=False, null=False)

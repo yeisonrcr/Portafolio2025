@@ -10,7 +10,7 @@ from django.core.paginator import Paginator
 from datetime import datetime
 
 #usaremos LOS DATOS de los condominios
-from condominio.models import PerfilUsuario, RegistroVisitas, RegistroAutomoviles, RegistroMascotas, RegistroReportes
+from condominio.models import PerfilUsuario, RegistroVisita, RegistroAutomovil, RegistroMascota, RegistroReporte
 
 
 #APLICACION DE OFICIALES 
@@ -48,7 +48,7 @@ def todo (request,**kwargs):
     
     #crearemos paginacion para todos los datos Aplicacion proyecto general
     
-    mascotas = RegistroMascotas.objects.all().order_by("fecha_creado")
+    mascotas = RegistroMascota.objects.all().order_by("fecha_creado")
     #guardameros todos los registros en variables
     #creo una instancia y digo que solo 10 voy a mostrar en el html
     paginador = Paginator(mascotas, 10)
@@ -59,7 +59,7 @@ def todo (request,**kwargs):
     
     
 
-    reportes = RegistroReportes.objects.all().order_by("fecha_creado")
+    reportes = RegistroReporte.objects.all().order_by("fecha_creado")
     #guardameros todos los registros en variables
     #creo una instancia y digo que solo 10 voy a mostrar en el html
     paginador = Paginator(reportes, 10)
@@ -70,7 +70,7 @@ def todo (request,**kwargs):
     
     
     
-    automoviles =RegistroAutomoviles.objects.all().order_by("usuario") #.select_related("usuario")
+    automoviles =RegistroAutomovil.objects.all().order_by("usuario") #.select_related("usuario")
     #guardameros todos los registros en variables
     #creo una instancia y digo que solo 10 voy a mostrar en el html
     paginador = Paginator(automoviles, 10)
@@ -80,7 +80,7 @@ def todo (request,**kwargs):
     pagina_objeto_automoviles = paginador.get_page(pagina_numero)
     
     
-    visitas_diarias_todas = RegistroVisitas.objects.all().order_by("usuario") #.select_related("usuario")  #.select_related("usuario") para relacionar 
+    visitas_diarias_todas = RegistroVisita.objects.all().order_by("usuario") #.select_related("usuario")  #.select_related("usuario") para relacionar 
     #guardameros todos los registros en variables
     #creo una instancia y digo que solo 10 voy a mostrar en el html
     paginador = Paginator(visitas_diarias_todas, 10)

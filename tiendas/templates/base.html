@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Mi Tienda Online{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 <body class="bg-gray-100 min-h-screen">
     <nav class="bg-blue-600 text-white p-4">
@@ -24,23 +25,71 @@
             </div>
         </div>
     </nav>
-
     <div class="container mx-auto mt-8 px-4">
+
         {% if messages %}
             {% for message in messages %}
-                <div class="bg-{{ message.tags }}-100 border border-{{ message.tags }}-400 text-{{ message.tags }}-700 px-4 py-3 rounded relative" role="alert">
-                    {{ message }}
+                <div 
+                    style="
+                        padding: 16px;
+                        margin-bottom: 12px;
+                        border-radius: 8px;
+                        font-size: 14px;
+                        font-weight: bold;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        background-color: {% if message.tags == 'success' %} #d4edda 
+                                          {% elif message.tags == 'error' %} #f8d7da 
+                                          {% elif message.tags == 'info' %} #d1ecf1 
+                                          {% else %} #fff3cd 
+                                          {% endif %};
+                        color: {% if message.tags == 'success' %} #155724 
+                               {% elif message.tags == 'error' %} #721c24 
+                               {% elif message.tags == 'info' %} #0c5460 
+                               {% else %} #856404 
+                               {% endif %};
+                        border: 1px solid {% if message.tags == 'success' %} #c3e6cb 
+                                          {% elif message.tags == 'error' %} #f5c6cb 
+                                          {% elif message.tags == 'info' %} #bee5eb 
+                                          {% else %} #ffeeba 
+                                          {% endif %};
+                    "
+                    role="alert"
+                >
+                    <span>{{ message }}</span>
+                    <button 
+                        style="
+                            background: transparent;
+                            border: none;
+                            font-size: 16px;
+                            font-weight: bold;
+                            color: inherit;
+                            cursor: pointer;
+                        "
+                        onclick="this.parentElement.style.display='none';"
+                    >
+                        &times;
+                    </button>
                 </div>
             {% endfor %}
         {% endif %}
-
+    
         {% block content %}{% endblock %}
     </div>
+    
 
+
+
+    
     <footer class="bg-gray-800 text-white py-4 mt-8">
         <div class="container mx-auto text-center">
             © {% now "Y" %} Mi Tienda Online. Todos los derechos reservados.
         </div>
     </footer>
+
+   
+
+    
 </body>
 </html>

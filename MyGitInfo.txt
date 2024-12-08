@@ -24,20 +24,15 @@ borrar la rama
 git branch -d nombre_de_la_rama
 
 
-
 """
-
 git clone xr
 cd xr
-
 git checkout -b usernamex
 
 #subir cambios
 git add .
 git commit -m "" 
-
 git push origin usernamex
-
 
 #cada que inicio, mantengo rama actualizada
 git checkout main

@@ -14,11 +14,27 @@ from django.shortcuts import get_object_or_404, redirect, render #rendings
 from django.contrib import messages #messager front
 
 #mis archivos
-from .models import Tienda, Producto, Categoria, Carrito, ItemCarrito, Provincia
+from .models import Tienda, Producto, Categoria, Carrito, ItemCarrito, Provincia, Canton, Distrito
 from .forms import TiendaForm, ProductoForm, CarritoForm
 
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 #manejar paginación de tablas a 10 campos, rendimiento.
+
+
+#funciones api
+from django.http import JsonResponse
+
+def get_cantones(request): 
+    provincia_id = request.GET.get('provincia_id') 
+    cantones = Canton.objects.filter(provincia_id=provincia_id).order_by('nombre') 
+    return JsonResponse(list(cantones.values('id', 'nombre')), safe=False) 
+
+def get_distritos(request): 
+    canton_id = request.GET.get('canton_id') 
+    distritos = Distrito.objects.filter(canton_id=canton_id).order_by('nombre') 
+    return JsonResponse(list(distritos.values('id', 'nombre')), safe=False)
+
+
 
 class TiendaListView(ListView):
     """
@@ -171,6 +187,8 @@ class ProductoDetailView(DetailView):
                     item_carrito.save()
                 
                 messages.success(request, f'Producto {self.object.nombre} agregado al carrito')
+
+                
                 return redirect('producto_detail', pk=self.object.pk)
             
         except Exception as e:
@@ -263,6 +281,7 @@ class CarritoView(LoginRequiredMixin, View):
     Permite varias funciones
     """
     template_name = 'tiendas/carrito.html' #declaro la template que voy a usar
+    items_por_pagina = 10  # Configuración de paginación
 
     def get(self, request): # al hacer una consulta
         """
@@ -270,11 +289,52 @@ class CarritoView(LoginRequiredMixin, View):
             Se utiliza funciones por defecto Django
                 Carrito
                     ItemCarrito
-        """
-        carritos = Carrito.objects.filter(usuario=request.user)
         
+        carritos = Carrito.objects.filter(usuario=request.user)
         #envio con normalidad para mas ordenado
         return render(request, self.template_name, {'carritos': carritos})
+        """
+        # Obtener todos los carritos del usuario
+        carritos = Carrito.objects.filter(usuario=request.user)
+        
+        # Lista para almacenar carritos paginados
+        carritos_paginados = []
+        
+        for carrito in carritos:
+            # Obtener items del carrito
+            items = carrito.items.all()
+            
+            # Configurar paginación para los items de cada carrito
+            paginator = Paginator(items, self.items_por_pagina)
+            
+            # Obtener el número de página de la solicitud
+            page = request.GET.get(f'page_carrito_{carrito.id}', 1)
+            
+            try:
+                # Obtener la página específica de items
+                items_pagina = paginator.page(page)
+            except PageNotAnInteger:
+                # Si no es un número, mostrar la primera página
+                items_pagina = paginator.page(1)
+            except EmptyPage:
+                # Si la página está fuera de rango, mostrar la última página
+                items_pagina = paginator.page(paginator.num_pages)
+            
+            # Crear un diccionario con el carrito y sus items paginados
+            carrito_paginado = {
+                'carrito': carrito,
+                'items': items_pagina,
+                'total_paginas': paginator.num_pages,
+                'pagina_actual': items_pagina.number
+            }
+            
+            carritos_paginados.append(carrito_paginado)
+        
+        return render(request, self.template_name, {
+            'carritos_paginados': carritos_paginados
+        })
+
+
 
     #funciones post request http
     def post(self, request):
@@ -311,21 +371,49 @@ class CarritoView(LoginRequiredMixin, View):
                     #manejo carritos y items en cada carrito por usuarios logeados
                     carrito = Carrito.objects.get(id=carrito_id, usuario=request.user) #envio id y usuario (con los mixins)
                     carrito.items.all().delete() #elimino los items en este carrito
+                    carrito.delete()
+                    
                     messages.success(request, 'Carrito vaciado correctamente')
                 except Carrito.DoesNotExist:
                     messages.error(request, 'El carrito no existe')
-            
-            # Eliminar ítem específico
+                        # Eliminar ítem específico
+                        
+                        
+                        
             elif 'eliminar_item' in request.POST:
-                #obtengo el item e intento eliminarlo
-                item_id = request.POST.get('item_id')
+                carrito_id = request.POST.get('carrito_id')  # ID del carrito enviado desde el formulario
+                item_id = request.POST.get('item_id')  # ID del ítem a eliminar
+
                 try:
-                    item = ItemCarrito.objects.get(id=item_id, carrito__usuario=request.user) #envio peticion a la base de datos de los items agregados al carrito ID, (envio mixins id, y user)
-                    item.delete() #elimino el item 
-                    messages.success(request, 'Producto eliminado del carrito')
+                    # Verificar que ambos IDs estén presentes
+                    if not carrito_id or not item_id:
+                        messages.error(request, "Faltan datos: carrito_id o item_id.")
+                        return redirect('carrito')  # Reemplaza 'tu_vista' con la vista correspondiente
+
+                    # Obtener el ítem específico relacionado con el carrito y el usuario
+                    item = ItemCarrito.objects.get(id=item_id, carrito__id=carrito_id, carrito__usuario=request.user)
+                    
+                    # Eliminar el ítem seleccionado
+                    item.delete()
+
+                    # Verificar si el carrito queda sin ítems
+                    carrito = Carrito.objects.get(id=carrito_id, usuario=request.user)  # Obtener el carrito
+                    if not carrito.items.exists():  # Si el carrito no tiene más ítems
+                        carrito.delete()  # Eliminar el carrito
+                        print("El carrito ha sido eliminado porque ya no tiene ítems.")
+                        messages.success(request, 'El producto fue eliminado y el carrito estaba vacío, así que fue eliminado.')
+                    else:
+                        print("El carrito aún tiene ítems.")
+                        messages.success(request, 'Producto eliminado del carrito.')
+
                 except ItemCarrito.DoesNotExist:
-                    messages.error(request, 'El ítem no existe') #si no es portque no hay nada aca
-        
+                    messages.error(request, 'El ítem que intentas eliminar no existe.')
+                except Carrito.DoesNotExist:
+                    messages.error(request, 'El carrito no existe.')
+                except Exception as e:
+                    messages.error(request, f'Ocurrió un error: {str(e)}')
+
+ 
         except Exception as e:
             messages.error(request, f'Error al procesar el carrito: {str(e)}')
         return redirect('carrito') #retorno carrito

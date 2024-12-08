@@ -1,3 +1,8 @@
+"Broken pipe" 
+    en un servidor ocurre cuando el servidor intenta 
+        enviar datos a un cliente, pero el cliente ya cerró 
+            la conexión antes de que los datos llegaran por completo.
+
 {% extends "./uno.html" %}
 
 
