@@ -113,19 +113,19 @@ class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
         fields = [
-            'nombre', 'categoria', 'detalles', 
+            'nombre', 'categoria', 
             'precio', 'stock', 
-            'foto1', 'foto2', 'foto3'
+            'foto1', 'foto2', 'foto3','detalles', 
         ]
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'categoria': forms.Select(attrs={'class': 'form-control'}),
-            'detalles': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'precio': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'stock': forms.NumberInput(attrs={'class': 'form-control'}),
             'foto1': forms.FileInput(attrs={'class': 'form-control-file'}),
             'foto2': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'foto3': forms.FileInput(attrs={'class': 'form-control-file'})
+            'foto3': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'detalles': forms.Textarea(attrs={'class': 'form-control', 'rows': 4})
         }
 
     def clean_precio(self):

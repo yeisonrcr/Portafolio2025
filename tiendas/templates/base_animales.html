@@ -51,12 +51,10 @@
             ➕ Crear Tienda
           </a>
           {% endif %}
-          <a
-            href="{% url 'logout' %}"
-            class="hover:bg-green-700 px-3 py-2 rounded transition inline-flex items-center"
-          >
-            🚪 Cerrar Sesión
-          </a>
+        
+          <form action="{% url 'logout' %}" method="post"> {% csrf_token %} <button  class="hover:bg-blue-700 px-3 py-2 rounded" type="submit"> 🚪 Cerrar Sesión </button> </form>
+
+
           {% else %}
           <a
             href="{% url 'login' %}"
@@ -65,7 +63,7 @@
             Iniciar Sesión
           </a>
           <a
-            href="{% url 'registro' %}"
+            href="{% url 'signup' %}"
             class="hover:bg-green-700 px-3 py-2 rounded transition inline-flex items-center"
           >
             Registrarse
