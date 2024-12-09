@@ -17,10 +17,13 @@
                     {% if user.is_superuser %}
                         <a href="{% url 'crear_tienda' %}" class="hover:bg-blue-700 px-3 py-2 rounded">Crear Tienda</a>
                     {% endif %}
-                    <a href="{% url 'logout' %}" class="hover:bg-blue-700 px-3 py-2 rounded">Cerrar Sesión</a>
+                    
+                    <form action="{% url 'logout' %}" method="post"> {% csrf_token %} <button  class="hover:bg-blue-700 px-3 py-2 rounded" type="submit"> Cerrar Sesión </button> </form>
                 {% else %}
                     <a href="{% url 'login' %}" class="hover:bg-blue-700 px-3 py-2 rounded">Iniciar Sesión</a>
-                    <a href="{% url 'registro' %}" class="hover:bg-blue-700 px-3 py-2 rounded">Registrarse</a>
+                    <a href="{% url 'signup' %}" class="hover:bg-blue-700 px-3 py-2 rounded">Registrarse</a>
+                
+                    
                 {% endif %}
             </div>
         </div>

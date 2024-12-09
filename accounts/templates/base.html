@@ -58,7 +58,7 @@
           Tiendas ecomycr™
         </a>
         <div class="flex items-center space-x-4">
-         
+          
           {% if user.is_authenticated %}
           <div class="relative group">
             <a
@@ -81,7 +81,7 @@
               </svg>
               <span
                 class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center"
-                >99</span
+                >0</span
               >
             </a>
           </div>
@@ -106,16 +106,11 @@
             </svg>
           </a>
           {% endif %}
-          
-          
           <form action="{% url 'logout' %}" method="post"> {% csrf_token %} <button  class="hover:bg-blue-700 px-3 py-2 rounded" type="submit"> 🚪 Cerrar Sesión </button> </form>
-
-
-          
           {% else %}
           <a
             href="{% url 'login' %}"
-            class="hover:bg-green-700 px-3 py-2 rounded transition inline-flex items-center"
+            class="hover:bg-green-300 px-3 py-2 rounded transition inline-flex items-center"
           >
             Iniciar Sesión
           </a>

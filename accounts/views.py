@@ -11,6 +11,9 @@ from django.http import HttpResponse
 def inicio(request):#prueba de inicio pero la pagina 1 es la principal para el proyecto general
     return HttpResponse("Hola aca estamos logeados : --> Al crear tu cuenta tienes acceso a las demas aplicaciones del sistema Portafolio")
 
+
+
+
 def crear_cuenta(request):#funcion para crear una cuenta en django admin por defecto 
     try:#validacion de erroes   
         if request.method == "POST": #Si es la peticion POST: ENVIAN INFORMACION 
@@ -19,10 +22,7 @@ def crear_cuenta(request):#funcion para crear una cuenta en django admin por def
                 #entro aca y lo guardo 
                 formulario.save() #puedes realizar un cleaned_data para limpiar datos y seguridad
                 
-                
-                #implementar seguridad extras
-                
-                                
+                #implementar seguridad extras     
                 return redirect("login")
         
         else: #si el POST, solo presento el formulario de creacion
