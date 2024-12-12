@@ -1,3 +1,4 @@
+NO SUBIR ARCHIVO .ENV y OTros a GIT Por ahora...
 Usar select_related o prefetch_related en consultas para optimizar el acceso a los datos relacionados:
 
 Usar serializadores para los datos y paginaciones

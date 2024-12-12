@@ -548,35 +548,52 @@ class CarritoView(LoginRequiredMixin, View):
             # Obtener el ID del carrito desde el formulario
             carrito_id = request.POST.get('carrito_id')
             
-            # Verificar que se haya recibido un carrito_id válido
+            # Verificar que se haya recibido un carrito_id válido, sin embargo ya esta implementada la seguridad, de no mostrar carritos vacios
             if not carrito_id:
-                messages.error(request, 'No se especificó un carrito.')
+                self.agregar_mensaje(request, "error" ,'No se especificó un carrito.')
                 return redirect('carrito')  # Redirigir a la vista del carrito si no hay carrito_id
 
             try:
-                # Buscar el carrito correspondiente al usuario logueado
+                # Buscar en la DB, el carrito correspondiente con usuario logeado, seguridad de tomar el carrito
                 carrito = Carrito.objects.get(id=carrito_id, usuario=request.user)
+                
+                # Obtener todos los ítems del carrito
+                items = carrito.items.all()
+                
+                if not items.exists():
+                    self.agregar_mensaje(request, "error",'El carrito está vacío.' )
+                    
+                    return redirect('carrito')  # Redirigir a la vista del carrito si está vacío
+
             except Carrito.DoesNotExist:
-                messages.error(request, 'El carrito no existe o no pertenece al usuario.')
+                
+                self.agregar_mensaje(request, "error" ,'El carrito no existe o no pertenece al usuario.')
+                                     
                 return redirect('carrito')  # Redirigir a la vista del carrito si no existe
 
-            # Obtener todos los ítems del carrito
-            items = carrito.items.all()
             
-            # Verificar si el carrito está vacío
-            if not items.exists():
-                messages.error(request, 'El carrito está vacío.')
-                return redirect('carrito')  # Redirigir a la vista del carrito si está vacío
-
             # Variables para almacenar detalles del producto y el precio total
             productos_detalles = []
             total_precio = 0
+            
+            
 
             # Iterar sobre los ítems del carrito
             for item in items:
                 try:
                     producto = item.producto  # Producto asociado al ítem
                     cantidad = item.cantidad  # Cantidad seleccionada
+                        
+                    # Verificar si hay suficiente stock
+                    if producto.stock < cantidad:
+                        self.agregar_mensaje(request,"error", f'No hay suficiente stock para {producto.nombre}')
+                        return redirect('carrito')
+                    
+                    # Restar la cantidad del stock, validar atómicos
+                    producto.stock -= cantidad
+                    producto.save()  # Guardar los cambios en el producto
+                
+                    
                     subtotal = producto.precio * cantidad  # Calcular el subtotal del ítem
                     
                     # Sumar al precio total
@@ -589,32 +606,49 @@ class CarritoView(LoginRequiredMixin, View):
                         'subtotal': subtotal,
                         'precio_unitario': producto.precio
                     })
+                    
                 except Exception as e:
-                    messages.error(request, f'Errores al realizar la compra: {e}')  # Manejar errores individuales
+                    self.agregar_mensaje(request, "error",  f'Errores al realizar la compra: {e}')  # Manejar errores individuales
 
+            fecha_creacion = "Hoy es x"
             # Escribir los detalles de la compra en un archivo de texto
+            
+            #realizo esto para practicar archivos pero esta factura debe guardarse en la base de datos para produccion
+            
             with open('venta.txt', 'w', encoding='utf-8') as file:
                 file.write('Nombre Producto | Cantidad | Precio Unitario | Subtotal\n')
                 file.write('-----------------------------------------------------------\n')
                 for producto in productos_detalles:
                     file.write(f"{producto['nombre_producto']} | {producto['cantidad']} | ₡{producto['precio_unitario']} | ₡{producto['subtotal']}\n")
-
+                    
+                
+                file.write('-----------------------------------------------------------\n')
+                file.write(f'-----------------------  FACTURA  ecomycr  ---------------\n')
+                
+                file.write('-----------------------------------------------------------\n')
+                
+                file.write(f"-----Fecha:  {fecha_creacion}--------------- Total: {total_precio:.2f}.  ")
+                
+                file.write('-----------------------------------------------------------\n')
+                
+                file.write('-----------------------------------------------------------\n')
+                
+                file.write('-----------------------------------------------------------\n')
             # Mensajes de éxito y confirmación
-            messages.success(request, 'Detalles de la compra guardados correctamente en venta.txt.')
-            messages.success(request, f'Se realizó la compra de {len(items)} productos.')
-            messages.info(request, f'Total: {total_precio:.2f} unidades monetarias.')
-
+            self.agregar_mensaje(request,"success", 'Detalles de la compra guardados correctamente en venta.txt.')
+            self.agregar_mensaje(request, "success",f'Se realizó la compra de {len(items)} productos.')
+            
+            messages.info(request, "info", f'Total de la venta: {total_precio:.2f} .')
+      
             # Vaciar el carrito después de la compra
             carrito.items.all().delete()
             carrito.delete()
 
         except Exception as e:
-            messages.error(request, f'Ocurrió un error al realizar la compra: {str(e)}')  # Manejo general de errores
+            self.agregar_mensaje(request, "error",  f'Ocurrió un error al realizar la compra: {str(e)}')  # Manejo general de errores
 
         # Redirigir a la vista del carrito al finalizar el proceso de compra
         return redirect(reverse('carrito'))
-
-
 
 
 

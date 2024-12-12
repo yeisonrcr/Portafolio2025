@@ -150,7 +150,7 @@
                                 </button>
                             </form>
 
-                            {# Formulario para procesar compra #}
+                            {# Formulario para procesar compra - Envio tambien el ID del Carrito y valido en el back el usuario por seguridad #}
                             <form method="post" class="inline">
                                 {% csrf_token %}
                                 <input type="hidden" name="carrito_id" value="{{ carrito.id }}">
