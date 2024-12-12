@@ -11,6 +11,7 @@ from django.urls import reverse_lazy #definir URLs por adelantado
 from django.db.models import Q 
 
 from django.shortcuts import get_object_or_404, redirect, render #rendings
+from django.shortcuts import reverse
 from django.contrib import messages #messager front
 
 #mis archivos
@@ -19,6 +20,13 @@ from .forms import TiendaForm, ProductoForm, CarritoForm
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 #manejar paginación de tablas a 10 campos, rendimiento.
+
+
+    
+    
+from django.db import transaction
+from django.db.models import F
+
 
 
 #funciones api
@@ -105,7 +113,7 @@ class TiendaDetailView(DetailView):
             if categoria:
                 productos = productos.filter(categoria__slug=categoria)
             
-            # Búsqueda de productos
+            # Búsqueda, con el query del ´q y filtramos si contenemos en dicho dato en el array-productos
             query = self.request.GET.get('q')
             if query:
                 productos = productos.filter(
@@ -129,6 +137,9 @@ class TiendaDetailView(DetailView):
             raise e
                 
         return context
+    
+    
+    
 
 class ProductoDetailView(DetailView):
     """
@@ -136,7 +147,6 @@ class ProductoDetailView(DetailView):
     Incluye lógica para agregar al carrito
     """
     model = Producto
-    #template_name = 'ecommerce/producto_detail.html'
     context_object_name = 'producto'
 
     def get_context_data(self, **kwargs):
@@ -145,7 +155,6 @@ class ProductoDetailView(DetailView):
         """
         context = super().get_context_data(**kwargs)
         try:
-            #al seleccionar un producto
             context['carrito_form'] = CarritoForm(
                 initial={'producto_id': self.object.id}
             )
@@ -154,50 +163,114 @@ class ProductoDetailView(DetailView):
             
         return context
 
+    def validar_stock(self, producto, cantidad, item_carrito=None):
+        """
+        Función que valida si hay suficiente stock
+        Si ya existe un ítem en el carrito, se suman las cantidades
+        """
+        stock_disponible = producto.stock
+
+        # Si ya existe un item en el carrito, consideramos la cantidad total
+        if item_carrito:
+            cantidad_total = item_carrito.cantidad + cantidad
+        else:
+            cantidad_total = cantidad
+        
+        # Validación del stock
+        if cantidad_total > stock_disponible:
+            # Si no hay suficiente stock, se devuelve False y la cantidad restante disponible
+            return False, stock_disponible - (item_carrito.cantidad if item_carrito else 0)  
+        return True, stock_disponible
+
     def post(self, request, *args, **kwargs):
         """
         Maneja la adición de productos al carrito
         """
-        self.object = self.get_object()
+        self.object = self.get_object()  # Obtenemos el objeto del post
         carrito_form = CarritoForm(request.POST)
         try:
-            
             if carrito_form.is_valid():
                 cantidad = carrito_form.cleaned_data['cantidad']
-                
-                # Obtener o crear carrito para esta tienda
-                carrito, created = Carrito.objects.get_or_create(
-                    usuario=request.user, 
-                    tienda=self.object.tienda
-                )
-                
-                # Verificar si el producto ya está en el carrito
-                item_carrito, created = ItemCarrito.objects.get_or_create(
-                    carrito=carrito,
-                    producto=self.object,
-                    defaults={
-                        'cantidad': cantidad,
-                        'precio_unitario': self.object.precio
-                    }
-                )
-                
-                # Si ya existe, actualizar cantidad
-                if not created:
-                    item_carrito.cantidad += cantidad
-                    item_carrito.save()
-                
-                messages.success(request, f'Producto {self.object.nombre} agregado al carrito')
 
-                
-                return redirect('producto_detail', pk=self.object.pk)
-            
+                # Usamos una transacción para garantizar que las operaciones sean atómicas
+                with transaction.atomic():
+                    # Usamos select_for_update para bloquear el producto mientras modificamos el stock
+                    producto = Producto.objects.select_for_update().get(id=self.object.id)
+
+                    # Validar si el stock disponible es suficiente para la cantidad solicitada
+                    is_valid, remaining_stock = self.validar_stock(producto, cantidad)
+                    
+                    if not is_valid:
+                        # Si no hay suficiente stock, mostramos un mensaje de error
+                        messages.error(request, f'No hay suficiente stock para agregar {cantidad} del producto {producto.nombre}. Solo quedan {remaining_stock} unidades disponibles.')
+                        return redirect('carrito')  # Redirigir al carrito sin agregar más productos
+
+                    # Obtener o crear carrito para esta tienda
+                    carrito, created = Carrito.objects.get_or_create(
+                        usuario=request.user,
+                        tienda=producto.tienda
+                    )
+
+                    # Verificar si el producto ya está en el carrito
+                    item_carrito, created = ItemCarrito.objects.get_or_create(
+                        carrito=carrito,
+                        producto=producto,
+                        defaults={
+                            'cantidad': cantidad,
+                            'precio_unitario': producto.precio
+                        }
+                    )
+
+                    # Si el producto ya está en el carrito, actualizar la cantidad
+                    if not created:
+                        cantidad_total_en_carrito = item_carrito.cantidad + cantidad
+                        # Validar si la nueva cantidad excede el stock disponible
+                        is_valid, remaining_stock = self.validar_stock(producto, cantidad, item_carrito)
+                        if not is_valid:
+                            messages.error(request, f'No hay suficiente stock para agregar {cantidad} más del producto {producto.nombre}. Solo quedan {remaining_stock} unidades disponibles.')
+                            return redirect('carrito')  # Redirigir al carrito sin agregar más productos
+
+                        item_carrito.cantidad = cantidad_total_en_carrito  # Actualizamos la cantidad del carrito
+                        item_carrito.save()  # Guardamos los cambios
+
+                    #else:
+                        # Si el producto no está en el carrito, actualizamos el stock
+                        #producto.stock -= cantidad
+                        #producto.save()  # Guardamos los cambios en el stock del producto
+
+                    # Mostrar mensaje de éxito si todo es correcto
+                    messages.success(request, f'Producto {producto.nombre} agregado al carrito.')
+
+                # Después de una operación exitosa, redirigimos al carrito
+                return redirect('carrito')
+
         except Exception as e:
-            raise e
-        #GET
+            # Manejo de errores más específico, mostrando mensaje de error al usuario
+            messages.error(request, f'Ocurrió un error al agregar el producto al carrito: {str(e)}')
+            return redirect('carrito')
+
+        # Si hay un error, simplemente hacemos el GET para mostrar la página
         return self.get(request, *args, **kwargs)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+
 #Crear tienda, con el superuser logeado VERIFICAR LA SEGURIDAD QUE SOLO UN SUPERUSER PUEDE CREAR TIENDAS 
-class CrearTiendaView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+class CrearTiendaView(LoginRequiredMixin, UserPassesTestMixin, CreateView): #vistas por defecto de Django, verificar versiones y documentación
     """
     Vista para crear una nueva tienda
     Solo accesible por superusuarios
@@ -237,7 +310,7 @@ class CrearProductoView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         Verifica que solo el propietario de la tienda pueda agregar productos
         """
         #control de agregado de productos
-        tienda = get_object_or_404(Tienda, pk=self.kwargs['tienda_pk']) #obtengo la tienda para su relacion
+        tienda = get_object_or_404(Tienda, pk=self.kwargs['tienda_pk']) #seguridad
         
         return self.request.user == tienda.propietario #retorno dueño del producto
 
@@ -275,51 +348,98 @@ class CrearProductoView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
 """
 
+
+
+
+
+
 class CarritoView(LoginRequiredMixin, View):
     """
-    Vista para gestionar el carrito de compras
-    Permite varias funciones
+    Vista para gestionar el carrito de compras.
+    Proporciona las funcionalidades para listar, actualizar, vaciar y eliminar ítems del carrito.
     """
-    template_name = 'tiendas/carrito.html' #declaro la template que voy a usar
-    items_por_pagina = 10  # Configuración de paginación
+    template_name = 'tiendas/carrito.html'  # Plantilla asociada a esta vista
+    items_por_pagina = 10  # Número de items por página para la paginación
 
-    def get(self, request): # al hacer una consulta
+
+    def get(self, request):
         """
-        Muestra el carrito del usuario, con varios carritos, y cada carrito con varios items se maneja orientado a objetos en los models 
-            Se utiliza funciones por defecto Django
-                Carrito
-                    ItemCarrito
-        
-        carritos = Carrito.objects.filter(usuario=request.user)
-        #envio con normalidad para mas ordenado
-        return render(request, self.template_name, {'carritos': carritos})
+        Maneja las solicitudes GET.
+        Muestra todos los carritos del usuario autenticado con sus items paginados.
         """
-        # Obtener todos los carritos del usuario
-        carritos = Carrito.objects.filter(usuario=request.user)
-        
-        # Lista para almacenar carritos paginados
-        carritos_paginados = []
-        
+        carritos = Carrito.objects.filter(usuario=request.user).prefetch_related('items__producto')
+
+        carritos_paginados = self._serializar_carritos(carritos, request)
+        total_precio = 0
+
         for carrito in carritos:
-            # Obtener items del carrito
+            for item in carrito.items.all():  # Iterar sobre los ítems de cada carrito
+                try:
+                    producto = item.producto
+                    cantidad = item.cantidad
+                    subtotal = producto.precio * cantidad
+
+                    total_precio += subtotal
+                except Exception as e:
+                    self.agregar_mensaje(request, 'error', f'Errores al realizar la compra: {e}')
+        
+        return render(request, self.template_name, {
+            'carritos_paginados': carritos_paginados,
+            'total_precio': total_precio,
+            
+        })
+
+
+
+
+
+
+    #METODOS POST ()
+    def post(self, request):
+        """
+        Maneja las solicitudes POST.
+        Procesa las acciones de actualizar cantidad, vaciar carrito y eliminar ítems.
+        """
+        try:
+            # Verificar qué acción se está solicitando
+            if 'actualizar_cantidad' in request.POST:
+                return self._actualizar_cantidad(request)
+            elif 'vaciar_carrito' in request.POST:
+                return self._vaciar_carrito(request)
+            elif 'eliminar_item' in request.POST:
+                return self._eliminar_item(request)
+            
+            elif 'realizar_compra' in request.POST:
+                return self._realizar_compra(request)
+            
+            
+        except Exception as e:
+            # Manejo general de errores
+            self.agregar_mensaje(request, 'error', f'Error al procesar el carrito: {str(e)}')
+        return redirect('carrito')
+
+    def _serializar_carritos(self, carritos, request):
+        """
+        Serializa los carritos para incluir la paginación de sus items.
+        """
+        carritos_paginados = []  # Lista para almacenar los carritos con items paginados
+
+        for carrito in carritos:
+            # Obtener los items asociados al carrito
             items = carrito.items.all()
-            
-            # Configurar paginación para los items de cada carrito
+
+            # Configurar la paginación
             paginator = Paginator(items, self.items_por_pagina)
-            
-            # Obtener el número de página de la solicitud
             page = request.GET.get(f'page_carrito_{carrito.id}', 1)
-            
+
             try:
-                # Obtener la página específica de items
+                # Obtener los items de la página solicitada
                 items_pagina = paginator.page(page)
             except PageNotAnInteger:
-                # Si no es un número, mostrar la primera página
-                items_pagina = paginator.page(1)
+                items_pagina = paginator.page(1)  # Página predeterminada
             except EmptyPage:
-                # Si la página está fuera de rango, mostrar la última página
-                items_pagina = paginator.page(paginator.num_pages)
-            
+                items_pagina = paginator.page(paginator.num_pages)  # Última página
+
             # Crear un diccionario con el carrito y sus items paginados
             carrito_paginado = {
                 'carrito': carrito,
@@ -327,96 +447,172 @@ class CarritoView(LoginRequiredMixin, View):
                 'total_paginas': paginator.num_pages,
                 'pagina_actual': items_pagina.number
             }
-            
             carritos_paginados.append(carrito_paginado)
-        
-        return render(request, self.template_name, {
-            'carritos_paginados': carritos_paginados
-        })
 
+        return carritos_paginados
+    
+    
+    
+    
 
-
-    #funciones post request http
-    def post(self, request):
+    def _actualizar_cantidad(self, request):
         """
-        Procesa modificaciones del carrito
+        Actualiza la cantidad de un ítem en el carrito.
         """
+        item_id = request.POST.get('item_id')
+        nueva_cantidad = request.POST.get('cantidad')
+
         try:
-            # Actualizar cantidad de un ítemCarrito del carrito
-            if 'actualizar_cantidad' in request.POST:
-                item_id = request.POST.get('item_id')#obtengo el item 
-                nueva_cantidad = request.POST.get('cantidad') #obtengo la nueva cantidad por el usuario en el formulario
-                
-                try:
-                    item = ItemCarrito.objects.get(id=item_id, carrito__usuario=request.user) # manejo de errores, tato de 
-                    #Obtengo el item con el acceso debido
-                    #seguridad para produccion escalable
-                    
-                    # Validar que la cantidad no exceda el stock
-                    producto = item.producto
-                    if int(nueva_cantidad) <= producto.stock:#validamos la cantidad de los productos 
-                        item.cantidad = nueva_cantidad # si cambiamos la cantidad del item
-                        item.save() #guardo lo nuevo al item
-                        messages.success(request, 'Cantidad actualizada correctamente') #manejamos msj por ahora
-                    else:
-                        messages.error(request, f'Solo hay {producto.stock} unidades disponibles')
-                
-                except ItemCarrito.DoesNotExist:
-                    messages.error(request, 'El ítem no existe')
+            # Recuperar el ítem y validar que pertenece al usuario
+            item = ItemCarrito.objects.get(id=item_id, carrito__usuario=request.user)
+            """Ese ítem pertenece al carrito correcto.
+                Ese carrito pertenece al usuario correcto al manejar sistema de seguridad con el sistema de registro."""
+            producto = item.producto #de todo el item obtengo los productos de la clase 
+
+            # Validar el stock del producto
+            if int(nueva_cantidad) <= producto.stock + 1:
+                item.cantidad = nueva_cantidad
+                item.save()  # Guardar los cambios
+                self.agregar_mensaje(request, 'success', 'Cantidad actualizada correctamente')
+            else:
+                self.agregar_mensaje(request, 'error', f'Solo hay {producto.stock} unidades disponibles')
+        except ItemCarrito.DoesNotExist:
+            self.agregar_mensaje(request, 'error', 'El ítem no existe')
+
+        return redirect('carrito')
+
+    def _vaciar_carrito(self, request):
+        """
+        Vacía completamente un carrito, eliminando todos sus ítems.
+        """
+        carrito_id = request.POST.get('carrito_id')
+        try:
+            # Recuperar el carrito asociado al usuario
+            carrito = Carrito.objects.get(id=carrito_id, usuario=request.user)
+            carrito.items.all().delete()  # Eliminar todos los ítems
+            carrito.delete()  # Eliminar el carrito
+            self.agregar_mensaje(request, 'success', 'Carrito eliminado')
+        except Carrito.DoesNotExist:
+            self.agregar_mensaje(request, 'error', 'El carrito no existe')
+
+        return redirect('carrito')
+    
+        
+    def _eliminar_item(self, request):
+        """
+        Elimina un ítem específico del carrito.
+        Si el carrito queda vacío, también se elimina.
+        """
+        item_id = request.POST.get('item_id')
+        carrito_id = request.POST.get('carrito_id')
+
+        try:
+            # Recuperar el ítem y validar que pertenece al usuario
+            item = ItemCarrito.objects.get(id=item_id, carrito__id=carrito_id, carrito__usuario=request.user)
+            item.delete()  # Eliminar el ítem
+
+            # Verificar si el carrito quedó vacío
+            carrito = Carrito.objects.get(id=carrito_id, usuario=request.user)
+            if not carrito.items.exists():
+                carrito.delete()  # Eliminar el carrito vacío
+                self.agregar_mensaje(request, 'success', 'El producto fue eliminado y el carrito también, ya que quedó vacío.')
+            else:
+                self.agregar_mensaje(request, 'success', 'Producto eliminado del carrito.')
+        except ItemCarrito.DoesNotExist:
+            self.agregar_mensaje(request, 'error', 'El ítem no existe')
+        except Carrito.DoesNotExist:
+            self.agregar_mensaje(request, 'error', 'El carrito no existe')
+
+        return redirect('carrito')
+
+    @staticmethod #metodo estatico para la clase Carrito Mejorando codigo limpio
+    #función personalizada que encapsula la lógica de agregar mensajes al request.
+    def agregar_mensaje(request, tipo, mensaje):
+        """
+        Agrega un mensaje al sistema de mensajes de Django.
+        :param request: Objeto de la solicitud.
+        :param tipo: Tipo de mensaje ('success' o 'error').
+        :param mensaje: Contenido del mensaje.
+        """
+        if tipo == 'success':
+            messages.success(request, mensaje)
+        elif tipo == 'error':
+            messages.error(request, mensaje)
+
+
+
+
+
+    def _realizar_compra(self, request):
+        try:
+            # Obtener el ID del carrito desde el formulario
+            carrito_id = request.POST.get('carrito_id')
             
-            # Vaciar carrito completo
-            elif 'vaciar_carrito' in request.POST:
-                carrito_id = request.POST.get('carrito_id')
+            # Verificar que se haya recibido un carrito_id válido
+            if not carrito_id:
+                messages.error(request, 'No se especificó un carrito.')
+                return redirect('carrito')  # Redirigir a la vista del carrito si no hay carrito_id
+
+            try:
+                # Buscar el carrito correspondiente al usuario logueado
+                carrito = Carrito.objects.get(id=carrito_id, usuario=request.user)
+            except Carrito.DoesNotExist:
+                messages.error(request, 'El carrito no existe o no pertenece al usuario.')
+                return redirect('carrito')  # Redirigir a la vista del carrito si no existe
+
+            # Obtener todos los ítems del carrito
+            items = carrito.items.all()
+            
+            # Verificar si el carrito está vacío
+            if not items.exists():
+                messages.error(request, 'El carrito está vacío.')
+                return redirect('carrito')  # Redirigir a la vista del carrito si está vacío
+
+            # Variables para almacenar detalles del producto y el precio total
+            productos_detalles = []
+            total_precio = 0
+
+            # Iterar sobre los ítems del carrito
+            for item in items:
                 try:
-                    #manejo carritos y items en cada carrito por usuarios logeados
-                    carrito = Carrito.objects.get(id=carrito_id, usuario=request.user) #envio id y usuario (con los mixins)
-                    carrito.items.all().delete() #elimino los items en este carrito
-                    carrito.delete()
+                    producto = item.producto  # Producto asociado al ítem
+                    cantidad = item.cantidad  # Cantidad seleccionada
+                    subtotal = producto.precio * cantidad  # Calcular el subtotal del ítem
                     
-                    messages.success(request, 'Carrito vaciado correctamente')
-                except Carrito.DoesNotExist:
-                    messages.error(request, 'El carrito no existe')
-                        # Eliminar ítem específico
-                        
-                        
-                        
-            elif 'eliminar_item' in request.POST:
-                carrito_id = request.POST.get('carrito_id')  # ID del carrito enviado desde el formulario
-                item_id = request.POST.get('item_id')  # ID del ítem a eliminar
+                    # Sumar al precio total
+                    total_precio += subtotal
 
-                try:
-                    # Verificar que ambos IDs estén presentes
-                    if not carrito_id or not item_id:
-                        messages.error(request, "Faltan datos: carrito_id o item_id.")
-                        return redirect('carrito')  # Reemplaza 'tu_vista' con la vista correspondiente
-
-                    # Obtener el ítem específico relacionado con el carrito y el usuario
-                    item = ItemCarrito.objects.get(id=item_id, carrito__id=carrito_id, carrito__usuario=request.user)
-                    
-                    # Eliminar el ítem seleccionado
-                    item.delete()
-
-                    # Verificar si el carrito queda sin ítems
-                    carrito = Carrito.objects.get(id=carrito_id, usuario=request.user)  # Obtener el carrito
-                    if not carrito.items.exists():  # Si el carrito no tiene más ítems
-                        carrito.delete()  # Eliminar el carrito
-                        print("El carrito ha sido eliminado porque ya no tiene ítems.")
-                        messages.success(request, 'El producto fue eliminado y el carrito estaba vacío, así que fue eliminado.')
-                    else:
-                        print("El carrito aún tiene ítems.")
-                        messages.success(request, 'Producto eliminado del carrito.')
-
-                except ItemCarrito.DoesNotExist:
-                    messages.error(request, 'El ítem que intentas eliminar no existe.')
-                except Carrito.DoesNotExist:
-                    messages.error(request, 'El carrito no existe.')
+                    # Guardar los detalles del producto en una lista
+                    productos_detalles.append({
+                        'nombre_producto': producto.nombre,
+                        'cantidad': cantidad,
+                        'subtotal': subtotal,
+                        'precio_unitario': producto.precio
+                    })
                 except Exception as e:
-                    messages.error(request, f'Ocurrió un error: {str(e)}')
+                    messages.error(request, f'Errores al realizar la compra: {e}')  # Manejar errores individuales
 
- 
+            # Escribir los detalles de la compra en un archivo de texto
+            with open('venta.txt', 'w', encoding='utf-8') as file:
+                file.write('Nombre Producto | Cantidad | Precio Unitario | Subtotal\n')
+                file.write('-----------------------------------------------------------\n')
+                for producto in productos_detalles:
+                    file.write(f"{producto['nombre_producto']} | {producto['cantidad']} | ₡{producto['precio_unitario']} | ₡{producto['subtotal']}\n")
+
+            # Mensajes de éxito y confirmación
+            messages.success(request, 'Detalles de la compra guardados correctamente en venta.txt.')
+            messages.success(request, f'Se realizó la compra de {len(items)} productos.')
+            messages.info(request, f'Total: {total_precio:.2f} unidades monetarias.')
+
+            # Vaciar el carrito después de la compra
+            carrito.items.all().delete()
+            carrito.delete()
+
         except Exception as e:
-            messages.error(request, f'Error al procesar el carrito: {str(e)}')
-        return redirect('carrito') #retorno carrito
+            messages.error(request, f'Ocurrió un error al realizar la compra: {str(e)}')  # Manejo general de errores
+
+        # Redirigir a la vista del carrito al finalizar el proceso de compra
+        return redirect(reverse('carrito'))
 
 
 

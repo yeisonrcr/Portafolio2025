@@ -75,3 +75,12 @@ Actualización Diciembre 2025
 
 
 
+
+
+Aplicación 3: Ecommerce 
+    Tiendas con sus productos y relaciones
+    Solo usuarios root pueden crear las tiendas y agregar productos nuevo a las tiendas
+    Se agrega Carrito de productos por tienda, cada carrito una única tienda con muchos productos
+        Cuando el carrito esta vacío se elimina automáticamente
+            Se da relaciones en models, CASCADE de usuarios, al igual que los productos.
+

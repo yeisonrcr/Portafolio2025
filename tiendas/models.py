@@ -243,6 +243,7 @@ class Carrito(models.Model):
     tienda = models.ForeignKey(Tienda, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     ultima_actualizacion = models.DateTimeField(auto_now=True)
+    
 
     def __str__(self):
         return f"Carrito de {self.usuario.username} - {self.tienda.nombre}"

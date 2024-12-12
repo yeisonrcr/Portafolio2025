@@ -1,0 +1,4 @@
+Nombre Producto | Cantidad | Precio Unitario | Subtotal
+-----------------------------------------------------------
+Pijama | 80 | ₡14900.00 | ₡1192000.00
+Pijama Dama S-M-L | 12 | ₡23000.00 | ₡276000.00
