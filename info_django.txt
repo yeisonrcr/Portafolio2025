@@ -1,3 +1,21 @@
+
+    # Ruta para manejar errores 404 personalizados
+    handler404 = "vehicle.views.error_404",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 NO SUBIR ARCHIVO .ENV y OTros a GIT Por ahora...
 Usar select_related o prefetch_related en consultas para optimizar el acceso a los datos relacionados:
 

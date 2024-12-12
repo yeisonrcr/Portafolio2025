@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+DATE_INPUT_FORMATS = ['%d-%m-%Y']
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -126,7 +128,7 @@ DJANGO_APPS=[
 ]
 
 MIS_APPS = [
-    'portafolio','accounts', 'condominio',  'oficiales', 'gyna', 'tiendas', 
+    'portafolio','accounts', 'condominio',  'oficiales', 'gyna', 'tiendas', 'widget_tweaks',
     ]
 
 INSTALLED_APPS = DJANGO_APPS + MIS_APPS 
@@ -144,6 +146,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'servidor.urls'
+
+
 
 TEMPLATES = [
     {
@@ -217,10 +221,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
+
 LANGUAGE_CODE = 'es'
-
-TIME_ZONE = 'America/Costa_Rica' #hora costa rica
-
+TIME_ZONE = 'America/Costa_Rica'
 
 USE_I18N = True # para internacionalizacion, preparar una aplicacion para que pueda ser adaptada a diferentes idiomas
 USE_TZ = False #Uso de zonas horarias
@@ -258,10 +261,14 @@ EMAIL_BACKEND="django.core.mail.backends.console.EmailBackend" #para pruebas ema
 EMAIL_HOST = "smtp.gmail.com" #dejo en los pdf alguna de estas configuraciones para email o outlook etc
 EMAIL_PORT = 587
 
+
+
 EMAIL_SSL=True
-EMAIL_USE_TLC =False #Transport layer security : para la conexion smtp
-EMAIL_HOST_USER= "ecotrabajo8@gmail.com"
-EMAIL_HOST_PASSWORD = "+.zbYja8918k"
+EMAIL_USE_TLC =False #Transport layer security : para la conexion smtp 
+
+#ESTOS DATOS AGREGALOS EN EL ARCHIVO .ENV
+EMAIL_HOST_USER= "ecotraXXXXXbajo8@gmail.com"
+EMAIL_HOST_PASSWORD = "XXXXXXXXX"
 
 
 

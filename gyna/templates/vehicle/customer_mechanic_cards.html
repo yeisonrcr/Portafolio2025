@@ -61,7 +61,9 @@
       <div class="card" >
         <img src="{% static "images/admin.png" %}" alt="John" style="width:100% " >
         <p class="title" > <strong>Administración</strong></p>
-        <p><a href="/adminclick"><button>Iniciar Sesión</button></a></p>
+        <p><a  href="{% url 'adminclick' %}" ><button>Iniciar Sesión</button></a></p>
+
+       
       </div>
     </div>
 

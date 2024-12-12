@@ -638,7 +638,7 @@ class CarritoView(LoginRequiredMixin, View):
             self.agregar_mensaje(request,"success", 'Detalles de la compra guardados correctamente en venta.txt.')
             self.agregar_mensaje(request, "success",f'Se realizó la compra de {len(items)} productos.')
             
-            messages.info(request, "info", f'Total de la venta: {total_precio:.2f} .')
+            messages.info(request, f'Total de la venta: {total_precio:.2f} .')
       
             # Vaciar el carrito después de la compra
             carrito.items.all().delete()
