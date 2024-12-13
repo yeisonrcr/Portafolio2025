@@ -13,7 +13,7 @@ git commit -m "" : comento
 git push origin xrama
 
 git checkout main : rama main
-git pull origin main : descargo ultimos cambios del repositorio remoto
+git pull origin x : descargo ultimos cambios del repositorio remoto
 git merge main : fusionar cambio en el main con mi rama 
 
 git branch : ver que rama estoy

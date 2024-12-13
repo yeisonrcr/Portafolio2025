@@ -15,10 +15,10 @@
 
 	<nav id="nav">
 		<ul class="container">
-			<li><a href="#">Facebook</a></li>
-			<li><a href="https://github.com/yeracr/miPortafolio2022" >Github</a></li>
-			<li><a href="#" >TikTok</a></li>
-			<li><a href="#" >Linkedin</a></li>
+			<li><a href="https://www.facebook.com/profile.php?id=100084222365058">Facebook</a></li>
+			<li><a href="https://github.com/yeracr/miPortafolio2025" >Github</a></li>
+			<li><a href="https://www.tiktok.com/@yeison.r.araya" >TikTok</a></li>
+			<li><a href="https://www.linkedin.com/in/ecomycr/" >Linkedin</a></li>
 		</ul>
 
 	</nav>
@@ -38,19 +38,40 @@
 						<h2 style="font-size:1.4em;" >Proyectos de Ingeniería Informática
 						</h2>
 
-						{% if request.user.username%}
-						<div style="text-align: left;">
-							<h5>
-								Usuario en linea: <a  style="color: #441945;" href="#"> {{username}} </a>
+						{% if request.user.username %}
+						<div style="text-align: left; margin: 10px; padding: 10px;">
+							<h5 style="margin-bottom: 10px;">
+								Usuario en línea:  {{ username }}
 							</h5>
 						</div>
-
 						{% else %}
-					
-						<h6 style="color: rgb(61, 0, 0);">
-							Para usar las aplicaciones del proyecto, deberás crearte una cuenta  <a href="{% url 'signup' %}">CREAR CUENTA</a>  o bien iniciar sesión  <a href="{% url 'login' %}">LOGIN</a>
-						</h6>
+						<div style="text-align: left; margin: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 8px;">
+							<h6 style="margin-bottom: 15px;">
+								<a href="{% url 'signup' %}" style="
+									background-color:rgb(19, 142, 107); 
+									color: white; 
+									padding: 10px 20px; 
+									text-decoration: none; 
+									border-radius: 5px; 
+									margin: 0 10px;
+									display: inline-block;
+									transition: background-color 0.3s ease;
+								">CREARTE UNA CUENTA</a>
+								
+								<a href="{% url 'login' %}" style="
+									background-color:rgb(10, 90, 60); 
+									color: white; 
+									padding: 10px 20px; 
+									text-decoration: none; 
+									border-radius: 5px; 
+									margin: 0 10px;
+									display: inline-block;
+									transition: background-color 0.3s ease;
+								">INICIAR SESIÓN</a>
+							</h6>
+						</div>
 						{% endif %}
+
 					</header>
 
 					<div class="container">
@@ -109,7 +130,7 @@
 			<div class="row">
 					<article class="box style2">
 						<h2><a href="#"><strong>Este portafolio se llevó a cabo sin fines lucrativos</a></h2>  <br>
-							<p>Creado únicamente para enseñar y practicar diferentes tecnologías de programación, tales como: HTML, CSS, BOOTSTRAP, Javascript, base de datos (MySql, MongoDB, Postgresql, y NoSQL), Python y sus framework: Django, Flask, entre otros<br>
+							<p>Creado únicamente para enseñar y prácticar diferentes tecnologías de programación, tales como: HTML, CSS, BOOTSTRAP, Javascript, base de datos (MySql, MongoDB, Postgresql, y NoSQL), Python y sus framework: Django, Flask, entre otros<br>
 								Para este portafolio he reutilizado código de cursos, blogs y tutoriales. <br>
 
 								En curso Php lenguaje.</strong>
