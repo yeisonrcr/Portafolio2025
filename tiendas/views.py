@@ -613,7 +613,7 @@ class CarritoView(LoginRequiredMixin, View):
             fecha_creacion = "Hoy es x"
             # Escribir los detalles de la compra en un archivo de texto
             
-            #realizo esto para practicar archivos pero esta factura debe guardarse en la base de datos para produccion
+            #realizo esto para prácticar archivos pero esta factura debe guardarse en la base de datos para produccion
             
             with open('venta.txt', 'w', encoding='utf-8') as file:
                 file.write('Nombre Producto | Cantidad | Precio Unitario | Subtotal\n')
@@ -622,16 +622,16 @@ class CarritoView(LoginRequiredMixin, View):
                     file.write(f"{producto['nombre_producto']} | {producto['cantidad']} | ₡{producto['precio_unitario']} | ₡{producto['subtotal']}\n")
                     
                 
-                file.write('-----------------------------------------------------------\n')
-                file.write(f'-----------------------  FACTURA  ecomycr  ---------------\n')
+                file.write('-----------------------------------------------------\n')
+                file.write(f'-----------------  FACTURA  ecomycr  ---------------\n')
                 
-                file.write('-----------------------------------------------------------\n')
+                file.write('-----------------------------------------------------\n')
                 
-                file.write(f"-----Fecha:  {fecha_creacion}--------------- Total: {total_precio:.2f}.  ")
+                file.write(f"Fecha:  {fecha_creacion}---- Total: {total_precio:.2f}.  ")
                 
-                file.write('-----------------------------------------------------------\n')
+                file.write('-------------------------------------------------------\n')
                 
-                file.write('-----------------------------------------------------------\n')
+                file.write('--------------------------------------------------------\n')
                 
                 file.write('-----------------------------------------------------------\n')
             # Mensajes de éxito y confirmación
