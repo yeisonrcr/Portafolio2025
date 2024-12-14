@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render,redirect
 from django.shortcuts import get_object_or_404
 from . import forms,models
@@ -55,17 +56,31 @@ def admin_request_view(request):
 # PENDIENTES
 #============================================================================================
 
+def paginate_queryset(request, queryset, per_page=10): 
+    paginator = Paginator(queryset, per_page) 
+    page = request.GET.get('page', 1)
+    
+    try: 
+        paged_data = paginator.page(page) 
+    except PageNotAnInteger: 
+        paged_data = paginator.page(1) 
+    except EmptyPage: 
+        paged_data = paginator.page(paginator.num_pages) 
+    
+    return paged_data
 
 
-#muestra todas la consultas
+
 @login_required(login_url='login')
 def admin_view_request_view(request):
     try:
-        enquiries = models.Request.objects.all().order_by('-id')  # Cambio de "enquiry" a "enquiries"
+        enquiries = models.Request.objects.all().order_by('-id')
     except models.Request.DoesNotExist:
-        enquiries = []  # Si no hay solicitudes, crea una lista vacía
+        enquiries = []
+    
+    paged_data = paginate_queryset(request, enquiries, per_page=10)
+    return render(request, 'vehicle/admin_view_request.html', {'data': paged_data})
 
-    return render(request, 'vehicle/admin_view_request.html', {'data': enquiries})
 
 
 
@@ -78,7 +93,10 @@ def admin_pendientes_clientes(request):
     except models.Request.DoesNotExist:
         # Si no hay solicitudes, crea una lista vacía
         enquiries = []
-
+    
+    
+    paged_data = paginate_queryset(request, enquiries, per_page=10)
+    
     return render(request, 'vehicle/admin_pendientes_clientes.html', {'data': enquiries})
 
 @login_required(login_url='login')
@@ -89,6 +107,10 @@ def admin_pendientes_dinero(request):
             # Cambio de "enquiry" a "enquiries"
     except models.Request.DoesNotExist:
         enquiries = []  # Si no hay solicitudes, crea una lista vacía
+    
+    
+    paged_data = paginate_queryset(request, enquiries, per_page=10)
+    
 
     return render(request, 'vehicle/admin_pendientes_dinero.html', {'data': enquiries})
 
@@ -99,8 +121,14 @@ def admin_pendientes_distribuidoras(request):
         
     except models.Request.DoesNotExist:
         enquiries = []  # Si no hay solicitudes, crea una lista vacía
+    
+    
+    paged_data = paginate_queryset(request, enquiries, per_page=10)
 
     return render(request, 'vehicle/admin_pendientes_distribuidoras.html', {'data': enquiries})
+
+
+
 
 @login_required(login_url='login')
 def admin_pendientes_investigar(request):
@@ -111,6 +139,7 @@ def admin_pendientes_investigar(request):
     except models.Request.DoesNotExist:
         # Si no hay solicitudes, crea una lista vacía
         enquiries = []
+        
         
     return render(request, 'vehicle/admin_pendiente_investigar.html', {'data': enquiries})
 
