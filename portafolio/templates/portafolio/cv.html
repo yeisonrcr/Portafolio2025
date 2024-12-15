@@ -46,6 +46,8 @@
                                 <a href="{% url 'todo_oficial' %}"><button class="mibtn">Oficiales</button></a>
                                 <a href="{% url 'tienda_list' %}"><button class="mibtn">Ecommerce</button></a>
                                 <a href="{% url 'gyna' %}"><button class="mibtn">Auto-control de Repuestos</button></a>
+                                <a href="{% url 'blog' %}"><button class="mibtn">Blog Código Info</button></a>
+                                    <!--Crear base de datos para manejar esto en el html con for dato in datos -->
                                 
                                 <!-- Opciones de autenticación del usuario -->
                                 {% if user.is_authenticated %}
@@ -113,6 +115,18 @@
                             <div class="location-details">
                                 <p>Control de Consultas</p>
                                 <a href="{% url 'todo_oficial' %}" class="location-btn">Vista previa</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Proyecto: CM-BLOG 2023 -->
+                    <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="single-location mb-30">
+                            <div class="location-img">
+                                <img src="{% static 'cv/img/gallery/location13.png' %}" alt="">
+                            </div>
+                            <div class="location-details">
+                                <p>Información de cursos</p>
+                                <a href="{% url 'blog' %}" class="location-btn">Vista previa</a>
                             </div>
                         </div>
                     </div>
