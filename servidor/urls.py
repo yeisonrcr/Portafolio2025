@@ -34,6 +34,8 @@ urlpatterns = [
     #urls para la app ecommerse
     path('ecom/', include('tiendas.urls')), #agregamos urls de oficiales app
     
+    path('blog/', include('blog.urls')), #agregamos urls de oficiales app
+    
     
 ]
 

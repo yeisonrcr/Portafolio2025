@@ -45,31 +45,37 @@
 							</h5>
 						</div>
 						{% else %}
+						
 						<div style="text-align: left; margin: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 8px;">
 							<h6 style="margin-bottom: 15px;">
 								<a href="{% url 'signup' %}" style="
 									background-color:rgb(19, 142, 107); 
 									color: white; 
-									padding: 10px 20px; 
+									padding: 8px 16px; 
 									text-decoration: none; 
 									border-radius: 5px; 
-									margin: 0 10px;
+									margin: 5px 0;
 									display: inline-block;
 									transition: background-color 0.3s ease;
+									font-size: 1rem;
 								">CREARTE UNA CUENTA</a>
-								
+						
 								<a href="{% url 'login' %}" style="
 									background-color:rgb(10, 90, 60); 
 									color: white; 
-									padding: 10px 20px; 
+									padding: 8px 16px; 
 									text-decoration: none; 
 									border-radius: 5px; 
-									margin: 0 10px;
+									margin: 5px 0;
 									display: inline-block;
 									transition: background-color 0.3s ease;
+									font-size: 1rem;
 								">INICIAR SESIÓN</a>
 							</h6>
 						</div>
+
+						
+						
 						{% endif %}
 
 					</header>
@@ -83,7 +89,7 @@
 							
 
 
-							<a  href="{% url 'proyectos' %}" class="button large scrolly">SEI Secundario</a>
+							<a  href="{% url 'proyectos' %}" class="button large scrolly">S.E.I Proyectos</a>
 						</div>
 					</div><br>
 
