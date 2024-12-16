@@ -1,7 +1,4 @@
 <!DOCTYPE html>
-
-<!--Se debe acomodar template para que funcione como receptor de los datos del view, con titulo, texto de explicacion, video y codigo -->
-<!--Base de datos : informacion_de_mi_cursos_respaldo -->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -21,25 +18,27 @@
             border: 1px solid #334155;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
+        p{
+            color: #000;
+            font-weight:400;
+        }
         .glowing-border {
             border: 2px solid transparent;
             background: linear-gradient(to right, #c2a0ff, #86a8ff) border-box;
-            color: #333; /* Color de texto oscuro para contraste */
-            
-            border-radius: 0.375rem; /* Corresponde a rounded-md */
-            
+            color: #333;
+            border-radius: 0.375rem;
         }
         pre {
-            text-align: left;            /* Alinea el texto a la izquierda */
-            white-space: pre-wrap;       /* Cambia el comportamiento de ajuste de texto */
-            word-wrap: break-word;       /* Permite el ajuste de palabras largas */
-            overflow-x: auto;            /* Habilita el desplazamiento horizontal */
-            border-radius: 20px;         /* Bordes redondeados */
-            padding: 16px;               /* Espaciado interno */
-            background-color: #0b1017;   /* Color de fondo */
-            font-family: "Courier New", Courier, monospace; /* Fuente monoespaciada */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
-            color: #e2e8f0;              /* Color del texto */
+            text-align: left;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-x: auto;
+            border-radius: 20px;
+            padding: 16px;
+            background-color: #0b1017;
+            font-family: "Courier New", Courier, monospace;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #e2e8f0;
         }
         .video-container {
             position: relative;
@@ -50,14 +49,28 @@
             background: #000;
             border-radius: 8px;
         }
+
         .video-container iframe {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            display: block;  /* Cambié esto para que el iframe se muestre de inmediato */
+        }
+        
+        .thumbnail {
+            width: 100%;
+            height: 100%;
+            background-image: url("https://img.youtube.com/vi/{{ data.youtube_blog }}/hqdefault.jpg");
+            background-size: cover;
+            background-position: center;
+            display: block;
+            border-radius: 8px;
         }
     </style>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@justinribeiro/lite-youtube@1/lite-youtube.min.js"></script>
+
 </head>
 <body class="bg-gray-900 text-gray-100">
     <nav class="bg-gray-800 p-4 flex justify-between items-center">
@@ -78,97 +91,68 @@
         </div>
     </nav>
     
-
     <div class="container mx-auto px-4 py-12">
-        <div class="grid md:grid-cols-2 gap-8 tech-gradient rounded-xl p-8 code-container">
-            <!-- Sección Explicación -->
-            <div class="space-y-6 bg-gray-800 p-6 rounded-md glowing-border">
-                <h2 class="text-3xl font-bold mb-4" style="color: #333;">Explicación del Código</h2>
-                <div style="text-align: center;" class="leading-relaxed" style="color: #333;">
-                    <p class="mb-4">
-                        TensorFlow es una biblioteca para construir y entrenar modelos de aprendizaje automático.
-                        <br>En esta sección, proporcionamos una explicación detallada y clara del código que se muestra a continuación. <br>
-                        Nuestro objetivo es hacer que conceptos técnicos complejos sean fáciles de entender.
-                    </p>
-                    <ul class="list-disc list-inside space-y-2">
+        {% if page_obj %}
+            {% for data in page_obj %}
+                <div class="grid md:grid-cols-2 gap-8 tech-gradient rounded-xl p-8 code-container m-5">
+                    <!-- Sección Explicación -->
+                    <div class="space-y-6 bg-gray-800 p-6 rounded-md glowing-border">
+                        <h2 class="text-3xl font-bold mb-4" style="color: #333;">{{data.titulo_blog}}</h2>
+                        <div class="leading-relaxed" style="text-align: center; color: #333;">
+                            <p class="mb-4">{{data.resumen_blog}}</p>
+                            <p class="mb-4">{{data.caracteristica_blog}}</p>
+                            <p>{{data.explicacion_blog}}</p>
+                        </div>
+
+                        <!-- Asegúrate de que data.youtube_blog contiene el ID del video -->
+                        {% if data.youtube_blog %}
+                            <div class="mt-3 video-container">
+                                <lite-youtube videoid="{{ data.youtube_blog }}"></lite-youtube>
+                            </div>
+
+                            
+
+                            
+                        {% endif %}
+                    </div>
+
+                    <!-- Sección Código -->
+                    <div class="bg-gray-800 p-6 rounded-md glowing-border">
                         
-                        <li>Fashion MNIST es un conjunto de datos con imágenes de ropa.</li>
-                        <li>Sequential, Dense, Flatten son herramientas de TensorFlow para construir redes neuronales.</li>
-                        <li>Adam es un algoritmo que ayuda al modelo a aprender.</li>
-                        <li>NumPy es una biblioteca para trabajar con matrices y números.</li>
-                    </ul>
-                    <br><br>
-                    <p>
-                        El código define una función create_and_train_model() que utiliza TensorFlow para entrenar un modelo de red neuronal en el conjunto de datos de moda MNIST, que consiste en imágenes de ropa. Primero, carga los datos y normaliza las imágenes dividiendo los valores de píxeles por 255 para que estén en el rango de 0 a 1. Luego, crea un modelo secuencial con una capa Flatten que aplana las imágenes 2D en vectores 1D, una capa densa con 128 neuronas utilizando la función de activación ReLU, y una capa de salida con 10 neuronas usando softmax para la clasificación. El modelo se compila con el optimizador Adam y la pérdida de entropía cruzada categórica esparsa. Después, el modelo se entrena durante 10 épocas con los datos de entrenamiento y se valida con los datos de prueba. Finalmente, se evalúa el modelo con los datos de prueba y se imprime la precisión obtenida. Al finalizar, la función retorna el modelo entrenado.
-                    </p>
+                        <h2 class="text-3xl font-bold mb-4" style="color: #333;">Código Fuente</h2>
+
+                        <pre><code class="language-python text-sm">{{data.codigo_blog}}</code></pre>
+                    </div>
                 </div>
-                <!-- Agregar video de YouTube -->
-                <div class="mt-3 video-container">
-                    <iframe width="560" height="315" src="https://www.youtube.com/embed/Je09qqhmEm0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-            </div>
+                <hr style="border-color: #3c3f3c;"><br>
+                
+            {% endfor %}
+        {% else %}
+            <p>No hay blogs disponibles en este momento.</p>
+        {% endif %}
 
-            <!-- Sección Código -->
-            <div class="bg-gray-800 p-6 rounded-md glowing-border">
-                <h2 style="color: #1e293b;" class="text-3xl font-bold text-indigo-400 mb-4">Código Fuente</h2>
-                <pre><code class="language-python text-sm">
-
-import tensorflow as tf
-from tensorflow.keras.datasets import fashion_mnist
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Flatten
-from tensorflow.keras.optimizers import Adam
-import numpy as np
-
-def create_and_train_model():
-    # Cargar el conjunto de datos de moda MNIST
-    (x_train, y_train), (x_test, y_test) = 
-        fashion_mnist.load_data()
-
-    # Normalizar los datos
-    x_train, x_test = x_train / 255.0, x_test / 255.0
-
-    # Crear el modelo
-    model = Sequential([
-        Flatten(input_shape=(28, 28)),     # Aplana las imágenes de 28x28 píxeles
-        Dense(128, activation='relu'),     # Capa densa con 128 neuronas y activación ReLU
-        Dense(10, activation='softmax')    # Capa de salida con 10 neuronas y activación softmax
-    ])
-
-    # Compilar el modelo
-    model.compile(optimizer=Adam(),
-                  loss='sparse_categorical_crossentropy',
-                  metrics=['accuracy'])
-
-    # Entrenar el modelo
-    model.fit(x_train, y_train, epochs=10, 
-        validation_data=(x_test, y_test))
-
-    # Evaluar el modelo
-    test_loss, test_acc = model.evaluate(x_test, y_test, verbose=2)
-    print('\nTest accuracy:', test_acc)
-
-    return model
-
-# Ejecutar la función
-if __name__ == "__main__":
-    model = create_and_train_model()
-
-
-
-
-
-
-
-
-
-
-                </code></pre>
-            </div>
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; primera</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
+                {% endif %}
+        
+                <span class="current">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                </span>
+        
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">siguiente</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">última &raquo;</a>
+                {% endif %}
+            </span>
         </div>
     </div>
 
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
+    
 </body>
 </html>
