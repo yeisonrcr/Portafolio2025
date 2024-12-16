@@ -1,1 +1,10 @@
 __pycache__
+static
+.env
+static/
+static
+media/
+media
+.sqlite3
+.txt
+djangoenv/
