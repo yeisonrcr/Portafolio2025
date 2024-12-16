@@ -6,12 +6,6 @@
     {# Título principal de la página #}
     <h1 class="text-3xl font-bold mb-6">Mi Carrito</h1>
 
-    {# Mensaje cuando no hay carritos #}
-    {% if not carritos_paginados %}
-    <div class="text-center text-gray-500 bg-white shadow-md rounded-lg p-6">
-        Tu carrito está vacío
-    </div>
-    {% endif %}
 
     {# Iteración sobre los carritos paginados #}
     {% for carrito in carritos_paginados %}
@@ -172,20 +166,15 @@
     {% endfor %}
 </div>
 
-<div class="text-center text-gray-500">
 
-    Convierto el div para texto pero envio un p para probar <br>
-    <p>
-        Si se realiza una compra se elimina el carrito.
-    </p>
+<div class="text-center text-gray-500 m-10">
     {% if messages %}
     <ul>
         {% for message in messages %}
             <li class="alert {{ message.tags }}">{{ message }}</li>
         {% endfor %}
     </ul>
-{% endif %}
-
+    {% endif %}
 </div>
 
 
