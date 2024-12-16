@@ -5,3 +5,6 @@ static/
 static
 media/
 media
+.sqlite3
+.txt
+djangoenv/
