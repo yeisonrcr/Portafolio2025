@@ -84,3 +84,10 @@ Aplicación 3: Ecommerce
         Cuando el carrito esta vacío se elimina automáticamente
             Se da relaciones en models, CASCADE de usuarios, al igual que los productos.
 
+
+
+
+Aplicación 4: Control de consulta
+
+
+Aplicación 5: Blog personal 
