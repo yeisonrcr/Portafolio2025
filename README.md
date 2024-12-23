@@ -1,12 +1,10 @@
 # 🚀 Proyecto Completo de Mi Portafolio
 
-¡Bienvenidos a mi proyecto de portafolio 2024! 
-🌟Este proyecto está construido con una variedad de tecnologías, incluyendo Django y Flask - Python, MySQL, SQLite3, entre otras. 📚🌐
+Este proyecto está construido con una variedad de tecnologías, incluyendo Django y Flask - Python, MySQL, SQLite3, entre otras. 📚🌐
 
 ## 🎯 Primer Paso: Arquitectura del Proyecto
 
-### 🏗️ ¿Qué Vamos a Hacer?
-Un portafolio completo que incluye múltiples aplicaciones.
+### 🏗️ Portafolio completo que incluye múltiples aplicaciones.
 
 ### 🗂️ Aplicación 1: Portafolio
 - **Descripción**: Esta aplicación no contiene base de datos. Es simplemente mi página principal y mi página de proyectos.
