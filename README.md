@@ -1,93 +1,76 @@
-primer paso
-arquitectura del proyecto
+# 🚀 Proyecto Completo de Mi Portafolio
 
-Que vamos hacer¿
-Proyecto completo de mi portafolio hecho en 
-Django Python Mysql Sqlite3 MysqlAlchemyORM Postgresql MongoDB FirebaseGoogle
+¡Bienvenidos a mi proyecto de portafolio 2024! 
+🌟Este proyecto está construido con una variedad de tecnologías, incluyendo Django y Flask - Python, MySQL, SQLite3, entre otras. 📚🌐
 
-aplicacion 1: portafolio No contiene base de datos
-    Mi pagina principal
-    Mi pagina de proyectos
+## 🎯 Primer Paso: Arquitectura del Proyecto
 
-apliacion 2: condominios  ORM DJANGO sql
-    Pagina INDEX:
-        En el portafolio Menu de herramientas de los condominios
-            Usuario para cada casa del condominios propietarios
-                Prodrán_: 
-                    Registrar Una visita diaria 
-                        (se elimina cada 12media noche)
-                        Actualizar la visita - Eliminar la visita -  Ver mis visitas
-                    
-                    Registrar sus automóviles y mascotas (Editarlos, eliminarlos)
-                    Registrar integrantes permanentes (Editarlos, eliminarlos)
-    
-    Base de datos: condominios
-        Tablas: UsuarioDjango, PerfilUsername, VisitaUsername, MascotasUsername, AutosUsername
+### 🏗️ ¿Qué Vamos a Hacer?
+Un portafolio completo que incluye múltiples aplicaciones. ¡Vamos a sumergirnos!
 
-            PerfilUsername: ( Username - integrantesPermanentes - placasPermanentes )
-            VisitaUsername: ( Username - Personas - Placas - FechaCreada - Eliminada)
-            MascotasUsername: ( Username - Foto - Nombre - Caracteristicas )
-            AutosUsername: ( Username - Foto - Placa - Caracteristicas )
+### 🗂️ Aplicación 1: Portafolio
+- **Descripción**: Esta aplicación no contiene base de datos. Es simplemente mi página principal y mi página de proyectos.
+  - 📄 **Mi página principal**
+  - 📄 **Mi página de proyectos**
 
-    Cascada:
+### 🏢 Aplicación 2: Condominios (Usando ORM de Django con SQL)
+- **Página INDEX**:
+  - En el portafolio, un menú de herramientas para condominios:
+    - Usuarios para cada casa del condominio (propietarios) podrán:
+      - Registrar una visita diaria (se elimina cada medianoche)
+      - Actualizar, eliminar y ver sus visitas
+      - Registrar, editar y eliminar sus automóviles y mascotas
+      - Registrar, editar y eliminar integrantes permanentes
 
-        Servidor
-            portafolio
-                conectar paginas urls 
-            condominios
-                general el sistema de login con django por derecto
-                    pero aun asi deber crear las carpetas de los templates que django busca por defecto
-                    En la documentacion oficial estan los pasos
-                
-                crear models en la base de datos
-                crear nueva visita, editarla, eliminarla, verla, y ver todas
+- **Base de Datos**: condominios
+  - **Tablas**:
+    - `UsuarioDjango`
+    - `PerfilUsername`
+    - `VisitaUsername`
+    - `MascotasUsername`
+    - `AutosUsername`
+  - **Campos**:
+    - `PerfilUsername`: (Username, integrantesPermanentes, placasPermanentes)
+    - `VisitaUsername`: (Username, Personas, Placas, FechaCreada, Eliminada)
+    - `MascotasUsername`: (Username, Foto, Nombre, Características)
+    - `AutosUsername`: (Username, Foto, Placa, Características)
 
+- **Cascada**:
+  - **Servidor**:
+    - **Portafolio**:
+      - Conectar páginas urls
+    - **Condominios**:
+      - General el sistema de login con Django por defecto
+      - Crear carpetas de templates que Django busca por defecto
+      - Crear models en la base de datos
+      - Crear nueva visita, editarla, eliminarla y verla
 
-#se realiza commit sistema logged realizado y pagina web personal y proyectos 21112024:8.50pm
-#se realiza version condominio terminado solo queda la esterica 22112024 10am
+### 🏁 Commit y Versión
+- **Commit**:
+  - Sistema de login realizado y página web personal y de proyectos (21/11/2024, 8:50 PM)
+  - Versión de condominio terminada, solo falta estética (22/11/2024, 10 AM)
 
+### 🏢 Aplicación 3: Oficiales (Usando base de datos del condominio)
+- Ver todas las visitas diarias registradas
+- Ver todos los usuarios permanentes
+- Ver todos los automóviles
+- Ver todas las mascotas
+- Ver reportes y realizar comentarios
+- Realizar entrada con QR del celular de la empresa, válido por 4 horas
+- Realizar salida
 
+### 🛠 Actualización Diciembre 2025
+- Configuración del proyecto para uso de MySQL, Gestor MySQL WorkBench o XAMMP Php
+  
+![image](https://github.com/user-attachments/assets/fcae26db-97f0-4d99-a6c6-7f56e32a502e)
 
-    Aplicacion 2 Oficiales:  23112024
-        (deben estar logeados con su usuario , en el proyecto general estan
-         logeados general a todas las aplicaciones registradas en el proyecto)
-            
-        Ver todas las visitas diarias registradas
-        Ver todos los usuarios permanentes
-        Ver todos los automoviles
-        Ver todas las mascotas
-        
-        Ver los reportes
-        realizar comentario a los reportes
+### 🛒 Aplicación 4: Ecommerce
+- Tiendas con productos y relaciones
+- Solo usuarios root pueden crear tiendas y agregar productos
+- Carrito de productos por tienda, cada carrito tiene productos de una única tienda y se elimina automáticamente cuando está vacío
 
-        realizar entrada con qr del celular de la empresa, valido por 4 horas
-        realizar salida
+### 🏥 Aplicación 5: Control de Consulta
 
-        
-            FALTA CLEAN CODE 
-            USO D BASE DE DATOS DEL Condominios
-            USO D BASE DE DATOS DE los oficiales
+### 📝 Aplicación 6: Blog Personal
 
-
-Actualización Diciembre 2025
-    Se configura proyecto para uso de MySQL, Gestor MySQL WorkBench o XAMMP Php
-    ![image](https://github.com/user-attachments/assets/fcae26db-97f0-4d99-a6c6-7f56e32a502e)
-
-
-
-
-
-Aplicación 3: Ecommerce 
-    Tiendas con sus productos y relaciones
-    Solo usuarios root pueden crear las tiendas y agregar productos nuevo a las tiendas
-    Se agrega Carrito de productos por tienda, cada carrito una única tienda con muchos productos
-        Cuando el carrito esta vacío se elimina automáticamente
-            Se da relaciones en models, CASCADE de usuarios, al igual que los productos.
-
-
-
-
-Aplicación 4: Control de consulta
-
-
-Aplicación 5: Blog personal 
+### 📝 Otras...
