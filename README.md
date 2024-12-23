@@ -6,7 +6,7 @@
 ## 🎯 Primer Paso: Arquitectura del Proyecto
 
 ### 🏗️ ¿Qué Vamos a Hacer?
-Un portafolio completo que incluye múltiples aplicaciones. ¡Vamos a sumergirnos!
+Un portafolio completo que incluye múltiples aplicaciones.
 
 ### 🗂️ Aplicación 1: Portafolio
 - **Descripción**: Esta aplicación no contiene base de datos. Es simplemente mi página principal y mi página de proyectos.
@@ -44,11 +44,6 @@ Un portafolio completo que incluye múltiples aplicaciones. ¡Vamos a sumergirno
       - Crear carpetas de templates que Django busca por defecto
       - Crear models en la base de datos
       - Crear nueva visita, editarla, eliminarla y verla
-
-### 🏁 Commit y Versión
-- **Commit**:
-  - Sistema de login realizado y página web personal y de proyectos (21/11/2024, 8:50 PM)
-  - Versión de condominio terminada, solo falta estética (22/11/2024, 10 AM)
 
 ### 🏢 Aplicación 3: Oficiales (Usando base de datos del condominio)
 - Ver todas las visitas diarias registradas
